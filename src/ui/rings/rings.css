@@ -1,0 +1,298 @@
+/* Sección 1: anillos. Solo transform/opacity en animaciones. */
+
+#stage-1 .ring-label,
+#stage-1 .ring-back,
+#stage-1 .ring-step {
+  pointer-events: auto;
+  font-family: var(--font-body);
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ring-label {
+  position: absolute;
+  left: 0;
+  top: 0;
+  min-height: 44px;
+  padding: 0.65rem 1.15rem;
+  border-radius: 999px;
+  border: 1px solid var(--surface-border);
+  background: var(--surface-solid);
+  box-shadow: 0 6px 18px -8px oklch(0.4 0.06 60 / 0.4);
+  color: var(--ink);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-200vw, 0);
+  will-change: transform, opacity;
+  transition: opacity 300ms var(--ease-out);
+}
+
+.ring-label.is-visible {
+  opacity: 1;
+}
+
+.ring-label:not(.is-visible) {
+  pointer-events: none !important;
+}
+
+.ring-label__text {
+  display: block;
+  animation: ring-pulse 2.6s var(--ease-in-out) infinite;
+}
+
+.ring-label:focus-visible,
+.ring-back:focus-visible,
+.ring-step:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@keyframes ring-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.92;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 1;
+  }
+}
+
+.ring-note {
+  position: absolute;
+  left: 50%;
+  bottom: calc(5.5rem + env(safe-area-inset-bottom));
+  width: max-content;
+  max-width: calc(100% - 2 * var(--gutter));
+  text-align: center;
+  font-size: 0.8rem;
+  letter-spacing: 0.1em;
+  color: var(--ink);
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--surface-border);
+  background: var(--surface-solid);
+  box-shadow: 0 6px 18px -8px oklch(0.4 0.06 60 / 0.4);
+  text-shadow: none;
+  translate: -50% 0;
+  transition: opacity 400ms var(--ease-out);
+}
+
+.ring-cue {
+  position: absolute;
+  left: 50%;
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+  translate: -50% 0;
+  opacity: 1;
+  transition: opacity 400ms var(--ease-out);
+}
+
+#stage-1.is-inside .ring-note,
+#stage-1.is-inside .ring-cue,
+#stage-1.is-inside .ring-label {
+  opacity: 0 !important;
+  animation: none !important;
+  pointer-events: none !important;
+}
+
+/* HUD interior */
+#ring-hud {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  visibility: hidden;
+  transition: visibility 0s linear 400ms;
+}
+
+#stage-1.is-inside #ring-hud {
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+#ring-hud > * {
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity 300ms var(--ease-out),
+    transform 300ms var(--ease-out);
+}
+
+#stage-1.is-inside #ring-hud > * {
+  opacity: 1;
+  transform: none;
+  transition-duration: 500ms;
+}
+
+#stage-1.is-inside #ring-hud > :nth-child(2) {
+  transition-delay: 70ms;
+}
+#stage-1.is-inside #ring-hud > :nth-child(3) {
+  transition-delay: 140ms;
+}
+
+.ring-hud__top {
+  position: absolute;
+  top: calc(0.75rem + env(safe-area-inset-top));
+  left: 0.75rem;
+  right: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  transform: translateY(-8px);
+}
+
+#stage-1.is-inside .ring-hud__top {
+  transform: none;
+}
+
+.ring-back,
+.ring-step {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  border: 1px solid var(--surface-border);
+  background: var(--surface-solid);
+  box-shadow: 0 6px 18px -8px oklch(0.4 0.06 60 / 0.4);
+  color: var(--ink);
+  transition:
+    transform 180ms var(--ease-out),
+    background-color 180ms var(--ease-out);
+}
+
+.ring-back:active,
+.ring-step:active {
+  transform: scale(0.94);
+}
+
+.ring-title {
+  font-family: var(--font-display);
+  font-size: 0.95rem;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  padding: 0.55rem 1rem;
+  max-width: calc(100% - 7.5rem); /* deja libre el botón de inicio */
+  border: 1px solid var(--surface-border);
+  border-radius: 999px;
+  background: var(--surface-solid);
+  box-shadow: 0 6px 18px -8px oklch(0.4 0.06 60 / 0.4);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ring-drag {
+  position: absolute;
+  left: 50%;
+  bottom: calc(5.5rem + env(safe-area-inset-bottom));
+  width: max-content;
+  font-size: 0.8rem;
+  letter-spacing: 0.12em;
+  color: var(--ink);
+  padding: 0.45rem 1rem;
+  border-radius: 999px;
+  border: 1px solid var(--surface-border);
+  background: var(--surface-solid);
+  box-shadow: 0 6px 18px -8px oklch(0.4 0.06 60 / 0.4);
+  text-shadow: none;
+  margin-left: 0;
+  translate: -50% 0;
+}
+
+#ring-hud > .ring-drag.is-gone,
+#stage-1.is-inside #ring-hud > .ring-drag.is-gone {
+  opacity: 0;
+}
+
+.ring-hud__bottom {
+  position: absolute;
+  left: 0.75rem;
+  right: 0.75rem;
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.ring-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: 999px;
+  border: 1px solid var(--surface-border);
+  background: var(--surface-solid);
+  box-shadow: 0 6px 18px -8px oklch(0.4 0.06 60 / 0.4);
+}
+
+.ring-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--ink);
+  opacity: 0.4;
+  transition:
+    transform 300ms var(--ease-out),
+    opacity 300ms var(--ease-out);
+}
+
+.ring-dot.is-active {
+  background: var(--accent);
+  opacity: 1;
+  transform: scale(1.5);
+}
+
+.ring-live {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+@media (min-width: 900px) {
+  .ring-hud__top {
+    top: 1.5rem;
+    left: 2rem;
+    right: 2rem;
+  }
+  .ring-hud__bottom {
+    left: 0;
+    right: 0;
+    margin-inline: auto;
+    width: min(420px, 90%);
+  }
+  .ring-title {
+    font-size: 1.1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ring-label__text {
+    animation: none;
+  }
+  #ring-hud > *,
+  .ring-note,
+  .ring-cue,
+  .ring-dot {
+    transition: opacity 200ms linear;
+    transform: none;
+  }
+  #ring-hud > * {
+    transition-delay: 0ms !important;
+  }
+  .ring-hud__top {
+    transform: none;
+  }
+  .ring-dot.is-active {
+    transform: none;
+  }
+}

@@ -1,0 +1,132 @@
+<div class="card-dock">
+  <div class="card-actions" id="card-actions">
+    <button type="button" class="btn btn--primary card-rsvp" id="rsvp-btn">
+      Confirmar asistencia
+    </button>
+  </div>
+  <div class="scroll-cue card-cue" aria-hidden="true">
+    <span>Desliza</span>
+    <small class="card-cue__next" id="card-cue-next"
+      >Para voltear la carta</small
+    >
+    <i></i>
+  </div>
+</div>
+
+<section
+  id="card-back"
+  class="card-overlay"
+  aria-label="Detalles del evento"
+  hidden
+>
+  <div class="cb-stage">
+    <article class="cb-page" aria-label="Lugar">
+      <p class="card-back__eyebrow">Lugar</p>
+      <h2 id="venue-name" class="card-back__venue"></h2>
+      <p id="venue-address" class="card-back__address"></p>
+      <a
+        id="maps-btn"
+        class="card-back__btn card-back__btn--solid"
+        target="_blank"
+        rel="noopener"
+        >Cómo llegar</a
+      >
+    </article>
+
+    <article class="cb-page" aria-label="Guarda la fecha">
+      <p class="card-back__eyebrow">Guarda la fecha</p>
+      <p id="date-label" class="cb-date"></p>
+      <div class="cb-stack" role="group" aria-label="Agregar al calendario">
+        <a
+          id="gcal-btn"
+          class="card-back__btn card-back__btn--solid"
+          target="_blank"
+          rel="noopener"
+          >Google Calendar</a
+        >
+        <button id="ics-btn" type="button" class="card-back__btn">
+          Apple / Outlook
+        </button>
+      </div>
+    </article>
+
+    <article id="notes-block" class="cb-page" aria-label="Para tener en cuenta">
+      <p class="card-back__eyebrow">Para tener en cuenta</p>
+      <ul id="notes-list" class="card-back__notes"></ul>
+    </article>
+
+    <article id="gifts-block" class="cb-page" aria-label="Lluvia de sobres">
+      <p id="gifts-title" class="card-back__eyebrow"></p>
+      <p id="gifts-message" class="card-back__text"></p>
+      <ul id="gifts-accounts" class="card-back__accounts"></ul>
+    </article>
+  </div>
+</section>
+
+<section
+  id="wish-panel"
+  class="card-overlay"
+  aria-label="Manda un deseo al cielo"
+  hidden
+>
+  <button type="button" class="card-close" id="wish-close" aria-label="Cerrar">
+    <svg
+      viewBox="0 0 24 24"
+      width="18"
+      height="18"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="1.8"
+      stroke-linecap="round"
+      aria-hidden="true"
+    >
+      <path d="M6 6l12 12M18 6L6 18" />
+    </svg>
+  </button>
+  <div class="wish__inner">
+    <h2 class="wish__title">Manda un deseo al cielo</h2>
+    <form id="wish-form" class="wish__form" novalidate>
+      <label class="wish__field" id="wish-name-field" hidden>
+        <span>Tu nombre completo</span>
+        <input type="text" name="name" autocomplete="name" maxlength="60" />
+      </label>
+      <label class="wish__field">
+        <span>Tu deseo</span>
+        <textarea
+          name="message"
+          rows="4"
+          maxlength="140"
+          placeholder="Escribe unas palabras para los novios"
+        ></textarea>
+        <small id="wish-count" class="wish__count">0 / 140</small>
+      </label>
+      <input
+        class="hp"
+        type="text"
+        name="website"
+        tabindex="-1"
+        autocomplete="off"
+        aria-hidden="true"
+      />
+      <p class="form__error" role="alert" hidden></p>
+      <button
+        type="submit"
+        class="card-back__btn card-back__btn--solid wish__send"
+      >
+        Enviar deseo
+      </button>
+    </form>
+  </div>
+</section>
+
+<p class="card-toast" id="card-toast" role="status" hidden>
+  ¡Gracias! Tu deseo va camino al cielo de los novios.
+</p>
+
+<aside class="wish-read" id="wish-read" hidden>
+  <p class="wish-read__text"></p>
+  <p class="wish-read__who"></p>
+  <button type="button" class="wish-read__close" aria-label="Cerrar">
+    &times;
+  </button>
+</aside>

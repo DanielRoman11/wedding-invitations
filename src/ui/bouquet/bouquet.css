@@ -1,0 +1,201 @@
+/* Sección 2: ramo. Panel de papel a la derecha (horizontal) o como hoja inferior (vertical).
+   Umbral de orientación igual al de la sección 3D: aspect 0.85 (ancho / alto). */
+
+.bq-root {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.bq-panel {
+  --bq-pad: clamp(1.25rem, 4vw, 1.75rem);
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 54svh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: var(--bq-pad);
+  padding-bottom: max(var(--bq-pad), env(safe-area-inset-bottom));
+  border-radius: 22px 22px 0 0;
+  outline-offset: -7px;
+  scrollbar-width: thin;
+  opacity: 0;
+  transform: translateY(24px);
+  transition:
+    opacity 500ms var(--ease-out),
+    transform 500ms var(--ease-out);
+}
+
+.stage.is-active .bq-panel {
+  opacity: 1;
+  transform: none;
+  transition-delay: 150ms;
+}
+
+@media (min-aspect-ratio: 85/100) {
+  .bq-panel {
+    left: auto;
+    right: clamp(1rem, 4vw, 3.5rem);
+    top: 50%;
+    bottom: auto;
+    width: min(30rem, 44vw);
+    height: auto;
+    max-height: 88svh;
+    border-radius: 14px;
+    padding-bottom: var(--bq-pad);
+    transform: translateY(calc(-50% + 24px));
+  }
+  .stage.is-active .bq-panel {
+    transform: translateY(-50%);
+  }
+}
+
+/* Encabezado */
+.bq-title {
+  font-size: clamp(1.9rem, 6vw, 2.4rem);
+  line-height: 1.1;
+  margin-top: 0.2rem;
+}
+
+.bq-message {
+  margin-top: 0.7rem;
+  font-size: 0.92rem;
+  line-height: 1.55;
+  color: oklch(0.34 0.04 55);
+  text-wrap: pretty;
+}
+
+.bq-count {
+  display: grid;
+  gap: 0.15rem;
+  margin-top: 0.8rem;
+}
+
+.bq-count__lead {
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+  color: var(--accent-deep);
+}
+
+.bq-count__fine {
+  font-size: 0.8rem;
+  letter-spacing: 0.08em;
+  font-variant-numeric: tabular-nums;
+  color: oklch(0.38 0.045 55);
+}
+
+/* Vestimenta */
+.bq-dress {
+  margin-top: 1.1rem;
+  padding: 0.9rem 0 0.2rem;
+  color: oklch(0.6 0.08 65);
+}
+
+.bq-orn {
+  display: block;
+  width: 7.5rem;
+  height: auto;
+  margin: 0 auto 0.5rem;
+}
+
+.bq-dress__label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: oklch(0.38 0.045 55);
+}
+
+.bq-dress__value {
+  margin-top: 0.15rem;
+  font-family: var(--font-display);
+  font-size: 1.3rem;
+  color: var(--paper-ink);
+}
+
+/* Firma */
+.bq-sign {
+  margin-top: 1.6rem;
+  padding-top: 1rem;
+  border-top: 1px solid oklch(0.6 0.08 65 / 0.45);
+}
+
+.bq-sign__names {
+  font-family: var(--font-script);
+  font-size: 1.9rem;
+  line-height: 1.1;
+  color: var(--accent-deep);
+}
+
+.bq-sign__date {
+  margin-top: 0.2rem;
+  font-size: 0.78rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: oklch(0.38 0.045 55);
+}
+
+/* Pista de arrastre: sobre la zona del ramo */
+.bq-hint {
+  position: absolute;
+  left: 50%;
+  top: max(4.5rem, env(safe-area-inset-top));
+  padding: 0.5rem 1rem;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  letter-spacing: 0.06em;
+  color: var(--ink);
+  background: var(--surface-solid);
+  border: 1px solid var(--surface-border);
+  box-shadow: 0 6px 18px -8px oklch(0.4 0.06 60 / 0.4);
+  text-shadow: none;
+  white-space: nowrap;
+  opacity: 0;
+  transform: translate(-50%, 8px);
+  transition:
+    opacity 700ms var(--ease-out),
+    transform 700ms var(--ease-out);
+}
+
+.bq-hint.is-on {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  transition-delay: 600ms;
+}
+
+.bq-hint.is-off {
+  opacity: 0;
+  transition-delay: 0s;
+}
+
+@media (min-aspect-ratio: 85/100) {
+  .bq-hint {
+    top: auto;
+    bottom: 2rem;
+    /* Centrado en la zona libre a la izquierda del panel */
+    left: calc((100vw - min(30rem, 44vw) - clamp(1rem, 4vw, 3.5rem)) / 2);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bq-panel,
+  .bq-hint {
+    transition-duration: 1ms;
+    transition-delay: 0s !important;
+  }
+  .bq-panel {
+    transform: none;
+  }
+  .stage.is-active .bq-panel {
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) and (min-aspect-ratio: 85/100) {
+  .bq-panel,
+  .stage.is-active .bq-panel {
+    transform: translateY(-50%);
+  }
+}

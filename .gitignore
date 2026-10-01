@@ -1,0 +1,19 @@
+node_modules
+dist
+.DS_Store
+*.log
+
+.dev.vars
+.wrangler
+
+# Secretos y credenciales: nunca al repo
+.env
+.env.*
+.dev.vars*
+*.pem
+*.key
+*.p12
+*service-account*.json
+*credentials*.json
+.claude/
+.wrangler/

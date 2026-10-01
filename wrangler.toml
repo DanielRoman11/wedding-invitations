@@ -1,0 +1,10 @@
+name = "wedding-invitations"
+pages_build_output_dir = "dist"
+compatibility_date = "2026-09-01"
+
+# Sin datos sensibles en este archivo (el repo es público).
+# Secretos de Pages (se cargan con wrangler, nunca en git):
+#   GOOGLE_SERVICE_ACCOUNT_KEY  JSON de la cuenta de servicio
+#   GOOGLE_SHEET_ID             ID de la hoja de RSVP y deseos
+#   npx wrangler pages secret put <NOMBRE> --project-name wedding-invitations
+# Para desarrollo local van en .dev.vars (ignorado por git).

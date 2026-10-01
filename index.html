@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Daniel &amp; Geraldine · Nuestra boda</title>
+    <meta
+      name="description"
+      content="Daniel y Geraldine se casan. Abre tu invitación y acompáñanos a celebrar."
+    />
+    <meta name="theme-color" content="#f3e6d1" />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Ccircle cx='32' cy='32' r='30' fill='%23f3e6d1'/%3E%3Ccircle cx='32' cy='32' r='29' fill='none' stroke='%236b4a36' stroke-width='2'/%3E%3Ctext x='32' y='40' font-family='Georgia, serif' font-size='22' fill='%236b4a36' text-anchor='middle'%3EDG%3C/text%3E%3C/svg%3E"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Marcellus&family=Mulish:ital,wght@0,300;0,400;0,600;0,700;1,400&family=Pinyon+Script&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <!-- Canvas 3D a pantalla completa -->
+    <canvas id="scene" aria-hidden="true"></canvas>
+
+    <!-- Pantalla de carga -->
+    <div id="loader" role="status" aria-label="Cargando">
+      <div class="loader__monogram" aria-hidden="true"></div>
+      <p class="loader__text">Preparando tu invitación…</p>
+    </div>
+
+    <!-- Pista inicial: toca el sobre -->
+    <div id="hint" class="hint" hidden>
+      <p class="hint__guest"></p>
+      <p class="hint__action">
+        <span class="hint__pulse" aria-hidden="true"></span>
+        Toca el sobre o desliza para abrirlo
+      </p>
+    </div>
+
+    <!-- Recorrido: tres secciones de scroll (solo espaciadores; el scroll elige la sección 3D) -->
+    <!-- Siempre presente: vuelve al inicio de la página -->
+    <button type="button" id="home-btn" class="home-btn" aria-label="Volver al inicio">
+      <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M12 19V6" />
+        <path d="M6 11l6-6 6 6" />
+      </svg>
+    </button>
+
+    <main id="journey" class="journey" aria-label="Invitación de boda">
+      <section id="sec-0" class="sec" data-stage="0" aria-hidden="true"></section>
+      <section id="sec-0b" class="sec" data-stage="0" aria-hidden="true"></section>
+      <section id="sec-1" class="sec" data-stage="1" aria-hidden="true"></section>
+      <section id="sec-2" class="sec" data-stage="2" aria-hidden="true"></section>
+    </main>
+
+    <!-- UI de cada sección: la inyecta su módulo en src/ui/* -->
+    <div id="stage-0" class="stage" aria-label="Invitación"></div>
+    <div id="stage-1" class="stage" aria-label="Anillos"></div>
+    <div id="stage-2" class="stage" aria-label="Ramo y confirmación"></div>
+
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>

@@ -1,0 +1,20 @@
+{
+  "name": "wedding-invitations",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Invitación de boda 3D personalizada por URL - Daniel y Geraldine",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^7.1.0",
+    "wrangler": "^4.145.0"
+  },
+  "dependencies": {
+    "gsap": "^3.13.0",
+    "three": "^0.180.0"
+  }
+}

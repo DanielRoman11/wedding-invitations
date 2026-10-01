@@ -1,0 +1,491 @@
+/* Sección 0: UI de la carta. Todo prefijado (.card-*, #card-back, #wish-panel, .wish-read). */
+
+#stage-0 [hidden] {
+  display: none !important;
+}
+
+/* ---------------------------- dock inferior ---------------------------- */
+.card-dock {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: max(0.75rem, env(safe-area-inset-bottom));
+  display: grid;
+  justify-items: center;
+  gap: 0.55rem;
+  padding: 0 var(--gutter);
+  pointer-events: none;
+  text-shadow: var(--shadow-text);
+}
+
+.card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.6rem;
+  pointer-events: auto;
+  transition:
+    opacity 300ms var(--ease-out),
+    transform 300ms var(--ease-out);
+}
+
+.card-dock.is-paper .card-actions {
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+}
+
+.card-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.6rem 1.15rem;
+  font: 600 0.85rem var(--font-body);
+  letter-spacing: 0.04em;
+  color: var(--ink);
+  background: var(--surface-solid);
+  border: 1px solid var(--surface-border);
+  border-radius: 999px;
+  box-shadow: 0 6px 18px -8px oklch(0.4 0.06 60 / 0.35);
+  backdrop-filter: blur(10px);
+  cursor: pointer;
+  text-shadow: none;
+  transition:
+    transform 180ms var(--ease-out),
+    background-color 180ms ease;
+}
+
+.card-pill__icon {
+  color: var(--accent);
+  transition: transform 500ms var(--ease-out);
+}
+
+.card-dock.is-flipped .card-pill__icon {
+  transform: rotate(180deg);
+}
+
+.card-pill:active {
+  transform: scale(0.97);
+}
+
+.card-pill:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card-pill:hover {
+    transform: translateY(-2px);
+    background: color-mix(in oklab, var(--surface-solid) 80%, oklch(0.8 0.07 70));
+  }
+}
+
+.card-rsvp {
+  padding: 0.7rem 1.4rem;
+  font-size: 0.85rem;
+  min-height: 2.75rem;
+}
+
+.card-hint {
+  font-size: 0.74rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+  transition: opacity 400ms var(--ease-out);
+}
+
+.card-hint.is-gone,
+.card-dock.is-paper .card-hint {
+  opacity: 0;
+}
+
+.card-cue {
+  gap: 0.15rem;
+  font-size: 0.64rem;
+  pointer-events: none;
+}
+
+.card-cue small {
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+  color: var(--accent);
+}
+
+.card-cue i {
+  height: 1.2rem;
+}
+
+/* ------------------- paneles superpuestos a la carta ------------------- */
+.card-overlay {
+  position: absolute;
+  background: transparent;
+  color: var(--paper-ink);
+  pointer-events: auto;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-line) transparent;
+  text-align: center;
+  text-shadow: none;
+  opacity: 0;
+  transition: opacity 320ms var(--ease-out);
+  /* respaldo antes de que cardUi fije --cw */
+  --cw: min(86vw, 360px);
+  container-type: normal;
+}
+
+.card-overlay.is-in {
+  opacity: 1;
+}
+
+.card-back__inner,
+.wish__inner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-height: 100%;
+  justify-content: flex-start;
+  padding: calc(var(--cw) * 0.09) calc(var(--cw) * 0.09) calc(var(--cw) * 0.12);
+  gap: calc(var(--cw) * 0.02);
+}
+
+.card-back__eyebrow {
+  font-family: var(--font-script);
+  font-size: calc(var(--cw) * 0.1);
+  line-height: 1;
+  color: var(--accent-deep);
+}
+
+.card-back__venue {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: max(15px, calc(var(--cw) * 0.058));
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.card-back__address {
+  font-size: max(11.5px, calc(var(--cw) * 0.036));
+  line-height: 1.4;
+  color: var(--ink-soft);
+  text-wrap: balance;
+}
+
+.card-back__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 2.1rem;
+  padding: 0.25rem calc(var(--cw) * 0.04);
+  font: 700 max(11.5px, calc(var(--cw) * 0.035)) var(--font-body);
+  letter-spacing: 0.03em;
+  text-decoration: none;
+  color: var(--paper-ink);
+  background: transparent;
+  border: 1px solid var(--gold-line-strong);
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    transform 180ms var(--ease-out),
+    background-color 180ms ease;
+}
+
+.card-back__btn--solid {
+  background: var(--accent-deep);
+  border-color: var(--accent-deep);
+  color: oklch(0.98 0.015 85);
+}
+
+.card-back__btn:active {
+  transform: scale(0.97);
+}
+
+.card-back__btn:focus-visible,
+.wish__field :is(input, textarea):focus-visible,
+.card-close:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .card-back__btn:hover {
+    transform: translateY(-1px);
+    background: var(--gold-line);
+  }
+  .card-back__btn--solid:hover {
+    background: color-mix(in oklab, var(--accent-deep) 85%, black);
+  }
+}
+
+.card-back__text {
+  font-size: max(12px, calc(var(--cw) * 0.04));
+  line-height: 1.5;
+  color: var(--ink-soft);
+  text-wrap: pretty;
+}
+
+.card-back__notes {
+  list-style: none;
+  text-align: left;
+}
+
+.card-back__notes li {
+  position: relative;
+  padding: 0.25em 0 0.25em 1.1em;
+  font-size: max(12px, calc(var(--cw) * 0.042));
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.card-back__notes li::before {
+  content: "";
+  position: absolute;
+  left: 0.1em;
+  top: 0.8em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--accent-deep);
+}
+
+.card-back__accounts {
+  list-style: none;
+  margin-top: calc(var(--cw) * 0.025);
+  display: grid;
+  gap: calc(var(--cw) * 0.02);
+  text-align: left;
+}
+
+.card-back__accounts .accounts__row {
+  padding: calc(var(--cw) * 0.025) calc(var(--cw) * 0.03);
+  font-size: max(11px, calc(var(--cw) * 0.034));
+  background: var(--paper-field);
+  border-radius: 8px;
+}
+
+.card-back__accounts .btn {
+  flex: none;
+  padding: 0.4rem 0.8rem;
+  font-size: max(11px, calc(var(--cw) * 0.033));
+}
+
+/* ------------- reverso: hojas que pasa el scroll de la página ------------- */
+/* No es un contenedor de scroll: la rueda y el dedo sobre la hoja scrollean la página */
+#card-back {
+  overflow: clip;
+  overscroll-behavior: auto;
+}
+
+.cb-stage {
+  position: absolute;
+  inset: 0;
+}
+
+/* Opacidad, visibilidad y subida los fija cardUi según el scroll (la hoja sube con su texto) */
+.cb-page {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--cw) * 0.04);
+  padding: calc(var(--cw) * 0.1);
+  text-align: center;
+  opacity: 0;
+  visibility: hidden;
+  will-change: transform, opacity;
+}
+
+.cb-page .card-back__eyebrow {
+  font-size: calc(var(--cw) * 0.12);
+}
+
+.cb-date {
+  font-family: var(--font-display);
+  font-size: max(15px, calc(var(--cw) * 0.058));
+  line-height: 1.25;
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+.cb-stack {
+  width: 100%;
+  display: grid;
+  gap: calc(var(--cw) * 0.03);
+}
+
+.cb-stack .card-back__btn {
+  width: 100%;
+}
+
+/* ------------------------------ deseo ------------------------------ */
+.wish__title {
+  font-family: var(--font-script);
+  font-weight: 400;
+  font-size: calc(var(--cw) * 0.11);
+  line-height: 1.05;
+  color: var(--accent-deep);
+  text-wrap: balance;
+}
+
+.wish__form {
+  width: 100%;
+  display: grid;
+  gap: calc(var(--cw) * 0.03);
+  text-align: left;
+}
+
+.wish__field {
+  display: grid;
+  gap: 0.3rem;
+}
+
+.wish__field > span {
+  font-size: max(10.5px, calc(var(--cw) * 0.03));
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.wish__field input,
+.wish__field textarea {
+  width: 100%;
+  padding: 0.6rem 0.75rem;
+  font: inherit;
+  font-size: 16px; /* evita el zoom de iOS */
+  color: var(--paper-ink);
+  background: var(--paper-field);
+  border: 1px solid var(--gold-line);
+  border-radius: 10px;
+  resize: none;
+}
+
+.wish__count {
+  justify-self: end;
+  font-size: 0.72rem;
+  color: var(--ink-mute);
+}
+
+.wish__send {
+  justify-self: center;
+}
+
+.wish__send:disabled {
+  opacity: 0.65;
+  cursor: progress;
+}
+
+.card-close {
+  position: sticky;
+  top: calc(var(--cw) * 0.03);
+  float: right;
+  z-index: 1;
+  width: 2.5rem;
+  height: 2.5rem;
+  margin: calc(var(--cw) * 0.03) calc(var(--cw) * 0.03) calc(var(--cw) * -0.16) 0;
+  display: grid;
+  place-items: center;
+  color: var(--paper-ink);
+  background: transparent;
+  border: 1px solid var(--gold-line);
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* ----------------------- aviso y deseo leído ----------------------- */
+.card-toast,
+.wish-read {
+  position: absolute;
+  left: 50%;
+  width: min(92vw, 28rem);
+  background: var(--surface-solid);
+  border: 1px solid var(--surface-border);
+  border-radius: 14px;
+  box-shadow: 0 12px 34px -12px oklch(0.4 0.06 60 / 0.45);
+  opacity: 0;
+  transform: translate(-50%, 12px);
+  transition:
+    opacity 300ms var(--ease-out),
+    transform 300ms var(--ease-out);
+}
+
+.card-toast {
+  top: max(1.25rem, env(safe-area-inset-top));
+  padding: 0.8rem 1.2rem;
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--ink);
+  text-shadow: none;
+}
+
+.wish-read {
+  bottom: max(1.25rem, env(safe-area-inset-bottom));
+  padding: 1rem 2.75rem 1rem 1.25rem;
+  text-align: center;
+  pointer-events: auto;
+}
+
+.card-toast.is-in,
+.wish-read.is-in {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+.wish-read__text {
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  line-height: 1.45;
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+.wish-read__who {
+  margin-top: 0.35rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+
+.wish-read__who:empty {
+  display: none;
+}
+
+.wish-read__close {
+  position: absolute;
+  top: 0.3rem;
+  right: 0.4rem;
+  width: 2.5rem;
+  height: 2.5rem;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: var(--muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+}
+
+.wish-read__close:focus-visible {
+  outline: 2px solid var(--accent);
+}
+
+@media (min-width: 900px) {
+  .card-dock {
+    flex-direction: row;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .card-actions,
+  .card-overlay,
+  .card-toast,
+  .wish-read,
+  .card-pill,
+  .card-pill__icon,
+  .card-hint,
+  .card-back__btn {
+    transition: none;
+  }
+}

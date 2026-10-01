@@ -1,0 +1,797 @@
+/* ----------------------------------------------------------------
+   Daniel & Geraldine · Invitación de boda 3D
+   Tema claro "tarde dorada en un jardín": cremas, espresso, mocha,
+   caramelo y salvia. El fondo 3D es un jardín de día; los datos viven en
+   papel marfil con doble filete caramelo. Tres secciones de scroll
+   (scroll-snap); cada UI de sección vive en src/ui/<seccion>/ y este
+   archivo solo trae lo global.
+   ---------------------------------------------------------------- */
+
+:root {
+  /* OKLCH: cremas cálidas de superficie, café como tinta, caramelo como
+     acento y salvia solo para foco. */
+  --bg: oklch(0.95 0.028 82);
+  --bg-deep: oklch(0.91 0.045 78);
+  --surface: oklch(0.985 0.014 85 / 0.88);
+  --surface-solid: oklch(0.975 0.018 85);
+  --surface-border: oklch(0.45 0.06 55 / 0.4);
+  --ink: oklch(0.28 0.04 55);
+  --muted: oklch(0.43 0.045 55);
+  --primary: oklch(0.45 0.07 135);
+  --accent: oklch(0.47 0.09 60);
+  --accent-deep: oklch(0.38 0.055 55);
+  --paper: oklch(0.985 0.014 88);
+  --paper-ink: oklch(0.28 0.04 55);
+
+  /* Tintes derivados del papel marfil: los paneles son papelería cálida */
+  --ink-soft: oklch(0.36 0.04 55);
+  --ink-mute: oklch(0.44 0.04 55);
+  --paper-tint: oklch(0.99 0.01 88);
+  --paper-field: oklch(0.99 0.01 88 / 0.88);
+  --gold: oklch(0.6 0.08 65);
+  --gold-line: oklch(0.6 0.08 65 / 0.7);
+  --gold-line-soft: oklch(0.62 0.07 65 / 0.45);
+  --gold-line-strong: oklch(0.5 0.08 60 / 0.8);
+
+  /* Estados de formulario */
+  --choice-checked: oklch(0.93 0.045 78);
+  --on-accent: oklch(0.985 0.012 88);
+  --error-bg: oklch(0.94 0.04 25);
+  --error-ink: oklch(0.4 0.14 25);
+
+  /* Sobre el 3D claro el halo va en crema: separa sin ensuciar */
+  --shadow-text: 0 1px 12px oklch(0.97 0.025 85 / 0.95), 0 0 3px oklch(0.97 0.025 85 / 0.9);
+
+  /* Tipografía */
+  --font-display: "Marcellus", "Georgia", serif;
+  --font-script: "Pinyon Script", cursive;
+  --font-body: "Mulish", system-ui, sans-serif;
+
+  /* Motion (curvas del skill `animate`) */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+
+  --gutter: clamp(1.25rem, 6vw, 3rem);
+
+  /* z-index semántico */
+  --z-canvas: 0;
+  --z-overlay: 20;
+  --z-hint: 10;
+  --z-stage-ui: 25;
+  --z-progress: 30;
+  --z-loader: 50;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  /* El scroll solo cambia de sección: una página por objeto 3D */
+  scroll-snap-type: y mandatory;
+  overscroll-behavior-y: none;
+}
+
+/* Sobre sellado: todavía no hay recorrido que scrollear */
+html.is-locked,
+html.is-locked body {
+  height: 100%;
+  overflow: hidden;
+}
+
+/* Dentro de un anillo: la página no scrollea y el canvas recibe todo el gesto */
+html.is-modal {
+  /* Sin height: 100% a propósito, para no perder la posición de scroll */
+  overflow: hidden;
+}
+
+html.is-modal #scene {
+  touch-action: none;
+}
+
+body {
+  min-height: 100%;
+  overflow-x: clip;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background-color: var(--bg-deep);
+  background-image: linear-gradient(180deg, var(--bg) 0%, var(--bg-deep) 100%);
+  -webkit-font-smoothing: antialiased;
+}
+
+#scene {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  display: block;
+  z-index: var(--z-canvas);
+  /* El navegador hace el scroll vertical; la escena solo lo lee */
+  touch-action: pan-y;
+}
+
+/* ----------------------------------------------------------------
+   Loader
+   ---------------------------------------------------------------- */
+#loader {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-loader);
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  gap: 1.25rem;
+  background: radial-gradient(ellipse at 50% 38%, oklch(0.98 0.03 88) 0%, var(--bg) 40%, var(--bg-deep) 100%);
+  transition:
+    opacity 600ms var(--ease-out),
+    visibility 0s linear 600ms;
+}
+
+#loader.is-done {
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.loader__monogram {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  border: 1px solid var(--accent-deep);
+  background: oklch(0.985 0.014 85 / 0.7);
+  display: grid;
+  place-content: center;
+  animation: loader-breathe 1.8s var(--ease-in-out) infinite;
+}
+
+.loader__monogram::before {
+  content: "D · G";
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+  letter-spacing: 0.18em;
+  color: var(--accent-deep);
+}
+
+.loader__text {
+  font-size: 0.85rem;
+  letter-spacing: 0.08em;
+  color: var(--muted);
+}
+
+@keyframes loader-breathe {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 oklch(0.6 0.08 65 / 0.35);
+  }
+  50% {
+    transform: scale(1.06);
+    box-shadow: 0 0 32px 4px oklch(0.6 0.08 65 / 0.28);
+  }
+}
+
+/* ----------------------------------------------------------------
+   Pista inicial
+   ---------------------------------------------------------------- */
+.hint {
+  position: fixed;
+  left: 50%;
+  bottom: max(2.25rem, env(safe-area-inset-bottom));
+  transform: translateX(-50%);
+  z-index: var(--z-hint);
+  text-align: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 700ms var(--ease-out);
+  width: min(90vw, 30rem);
+}
+
+.hint.is-visible {
+  opacity: 1;
+}
+
+.hint__guest {
+  font-family: var(--font-script);
+  font-size: clamp(2.2rem, 6vw, 3rem);
+  line-height: 1.1;
+  color: var(--accent-deep);
+  text-shadow: var(--shadow-text);
+  margin-bottom: 0.5rem;
+}
+
+.hint__action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.85rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink);
+  background: var(--surface-solid);
+  border: 1px solid var(--surface-border);
+  box-shadow: 0 8px 22px -10px oklch(0.4 0.05 55 / 0.4);
+  border-radius: 999px;
+  padding: 0.65rem 1.2rem;
+}
+
+.hint__pulse {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  animation: hint-pulse 1.6s var(--ease-out) infinite;
+}
+
+@keyframes hint-pulse {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  70% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+  100% {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+
+/* ----------------------------------------------------------------
+   Recorrido: espaciadores de scroll y contenedores de UI por sección
+   ---------------------------------------------------------------- */
+.journey {
+  position: relative;
+  pointer-events: none;
+}
+
+.sec {
+  height: 100svh;
+  scroll-snap-align: start;
+  scroll-snap-stop: always;
+}
+
+/* La UI de cada sección se inyecta aquí. Los hijos interactivos ponen
+   pointer-events: auto. Solo la sección activa es visible. */
+.stage {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-overlay);
+  pointer-events: none;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 400ms var(--ease-out),
+    visibility 0s linear 400ms;
+}
+
+.stage.is-active {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+/* "Desliza" */
+.scroll-cue {
+  display: grid;
+  justify-items: center;
+  gap: 0.6rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-shadow: var(--shadow-text);
+  opacity: 0;
+}
+
+html.is-open .scroll-cue {
+  animation: cue-in 900ms var(--ease-out) 1s both;
+}
+
+.scroll-cue i {
+  width: 1px;
+  height: 2.4rem;
+  background: linear-gradient(var(--accent-deep), transparent);
+  transform-origin: top;
+  animation: cue-line 1.8s var(--ease-in-out) infinite;
+}
+
+@keyframes cue-in {
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes cue-line {
+  0% {
+    transform: scaleY(0);
+    opacity: 1;
+  }
+  60% {
+    transform: scaleY(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleY(1);
+    opacity: 0;
+  }
+}
+
+/* ----------------------------------------------------------------
+   Tipografía sobre el jardín claro
+   ---------------------------------------------------------------- */
+.eyebrow {
+  font-family: var(--font-script);
+  font-size: clamp(2.4rem, 8vw, 3.6rem);
+  line-height: 1;
+  color: var(--accent);
+  text-shadow: var(--shadow-text);
+  margin-bottom: 0.75rem;
+}
+
+.title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: clamp(1.7rem, 6vw, 2.6rem);
+  line-height: 1.15;
+  text-wrap: balance;
+  margin-bottom: 1rem;
+}
+
+/* ----------------------------------------------------------------
+   Paneles de papel (datos y formularios)
+   ---------------------------------------------------------------- */
+.panel {
+  pointer-events: auto;
+  position: relative;
+  text-align: center;
+  padding: clamp(1.5rem, 5vw, 2.5rem) clamp(1.25rem, 4vw, 2.5rem);
+  background: var(--paper);
+  color: var(--paper-ink);
+  border-radius: 14px;
+  /* Doble filete caramelo estilo papelería fina */
+  outline: 1px solid var(--gold-line);
+  outline-offset: -7px;
+  text-shadow: none;
+  box-shadow:
+    0 24px 70px -18px oklch(0.4 0.06 55 / 0.4),
+    0 4px 14px -6px oklch(0.4 0.06 55 / 0.22),
+    inset 0 0 60px oklch(0.92 0.04 80 / 0.4);
+}
+
+.eyebrow--paper {
+  color: var(--accent-deep);
+  text-shadow: none;
+}
+
+.title--paper {
+  color: var(--paper-ink);
+  text-shadow: none;
+}
+
+.panel__title {
+  font-family: var(--font-display);
+  font-weight: 400;
+  font-size: 0.85rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+  margin-bottom: 0.75rem;
+}
+
+.panel__strong {
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+}
+
+.panel__text {
+  margin-top: 0.3rem;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--ink-soft);
+  text-wrap: pretty;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.5rem;
+  pointer-events: auto;
+}
+
+/* ----------------------------------------------------------------
+   Botones
+   ---------------------------------------------------------------- */
+.btn {
+  display: inline-block;
+  padding: 0.9rem 1.9rem;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.04em;
+  text-decoration: none;
+  text-shadow: none;
+  cursor: pointer;
+  pointer-events: auto;
+  transition:
+    transform 180ms var(--ease-out),
+    box-shadow 180ms var(--ease-out),
+    background-color 180ms ease;
+}
+
+.btn--primary {
+  background: var(--accent-deep);
+  color: var(--on-accent);
+  border: 1px solid var(--accent-deep);
+}
+
+.btn--ghost {
+  background: transparent;
+  color: var(--paper-ink);
+  border: 1px solid var(--gold-line-strong);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .btn--primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px -8px oklch(0.38 0.055 55 / 0.5);
+    background: oklch(0.32 0.05 55);
+  }
+
+  .btn--ghost:hover {
+    transform: translateY(-2px);
+    background: oklch(0.6 0.08 65 / 0.16);
+  }
+}
+
+.btn:active {
+  transform: translateY(0) scale(0.97);
+  transition-duration: 120ms;
+}
+
+.btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
+.btn--small {
+  padding: 0.5rem 1rem;
+  font-size: 0.8rem;
+}
+
+/* Itinerario */
+.schedule {
+  list-style: none;
+  text-align: left;
+}
+
+.schedule__row {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px dashed var(--gold-line-soft);
+}
+
+.schedule__row:last-child {
+  border-bottom: 0;
+}
+
+.schedule__time {
+  font-family: var(--font-display);
+  color: var(--accent-deep);
+  font-variant-numeric: tabular-nums;
+}
+
+.schedule__what strong {
+  display: block;
+  font-weight: 600;
+}
+
+.schedule__what small {
+  display: block;
+  font-size: 0.82rem;
+  color: var(--ink-mute);
+}
+
+.notes {
+  list-style: none;
+  text-align: left;
+}
+
+.notes li {
+  position: relative;
+  padding: 0.3rem 0 0.3rem 1.2rem;
+  font-size: 0.95rem;
+  line-height: 1.55;
+  color: var(--ink-soft);
+}
+
+.notes li::before {
+  content: "";
+  position: absolute;
+  left: 0.15rem;
+  top: 0.85rem;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--accent-deep);
+}
+
+.accounts {
+  list-style: none;
+  margin-top: 0.9rem;
+  display: grid;
+  gap: 0.6rem;
+  text-align: left;
+}
+
+.accounts__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.7rem 0.9rem;
+  border: 1px solid var(--gold-line);
+  border-radius: 10px;
+  background: var(--paper-tint);
+}
+
+.accounts__info {
+  display: grid;
+  gap: 0.1rem;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.accounts__info small {
+  color: var(--ink-mute);
+}
+
+/* ----------------------------------------------------------------
+   Formularios
+   ---------------------------------------------------------------- */
+.form {
+  display: grid;
+  gap: 1.1rem;
+  margin-top: 1.25rem;
+  text-align: left;
+}
+
+.form[hidden],
+.field[hidden],
+.done[hidden] {
+  display: none;
+}
+
+.field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.field > span,
+.choice legend {
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.field input,
+.field textarea {
+  width: 100%;
+  padding: 0.8rem 0.9rem;
+  font: inherit;
+  font-size: 1rem; /* 16px evita el zoom automático en iOS */
+  color: var(--paper-ink);
+  background: var(--paper-field);
+  border: 1px solid var(--gold-line);
+  border-radius: 10px;
+  resize: vertical;
+}
+
+.field input:focus-visible,
+.field textarea:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 1px;
+}
+
+.field textarea::placeholder {
+  color: oklch(0.5 0.035 55);
+}
+
+.field__count {
+  justify-self: end;
+  font-size: 0.75rem;
+  color: var(--ink-mute);
+}
+
+.choice {
+  display: grid;
+  gap: 0.5rem;
+  border: 0;
+}
+
+.choice__opt {
+  display: flex;
+  align-items: center;
+  gap: 0.7rem;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--gold-line);
+  border-radius: 10px;
+  background: var(--paper-tint);
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background-color 160ms ease;
+}
+
+.choice__opt input {
+  width: 1.15rem;
+  height: 1.15rem;
+  accent-color: var(--accent-deep);
+}
+
+.choice__opt:has(input:checked) {
+  border-color: var(--accent);
+  background: var(--choice-checked);
+}
+
+.choice__opt:has(input:focus-visible) {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+.stepper {
+  display: inline-flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.stepper button {
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  border: 1px solid var(--gold-line-strong);
+  background: transparent;
+  font-size: 1.4rem;
+  line-height: 1;
+  color: var(--paper-ink);
+  cursor: pointer;
+  transition: transform 160ms var(--ease-out);
+}
+
+.stepper button:active {
+  transform: scale(0.92);
+}
+
+.stepper output {
+  min-width: 2ch;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.form .btn {
+  justify-self: center;
+  border: 1px solid var(--accent-deep);
+}
+
+.form .btn:disabled {
+  opacity: 0.65;
+  cursor: progress;
+}
+
+.form__error {
+  padding: 0.6rem 0.8rem;
+  border-radius: 8px;
+  background: var(--error-bg);
+  color: var(--error-ink);
+  font-size: 0.9rem;
+}
+
+.form__error[hidden] {
+  display: none;
+}
+
+/* Campo trampa para bots: fuera de pantalla, nunca visible */
+.hp {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+}
+
+.done {
+  margin-top: 1.25rem;
+}
+
+.done__title {
+  font-family: var(--font-script);
+  font-size: clamp(2.2rem, 7vw, 3rem);
+  color: var(--accent-deep);
+  line-height: 1.1;
+}
+
+/* ----------------------------------------------------------------
+   Accesibilidad de movimiento
+   ---------------------------------------------------------------- */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-snap-type: none;
+  }
+
+  .loader__monogram,
+  .hint__pulse,
+  .scroll-cue i {
+    animation: none;
+  }
+
+  .btn,
+  .stage {
+    transition: none;
+  }
+}
+
+/* ----------------------------------------------------------------
+   Botón "volver al inicio": visible en todo momento tras abrir el sobre
+   ---------------------------------------------------------------- */
+.home-btn {
+  position: fixed;
+  top: max(0.75rem, env(safe-area-inset-top));
+  right: max(0.75rem, env(safe-area-inset-right));
+  z-index: 40;
+  width: 2.75rem;
+  height: 2.75rem;
+  display: grid;
+  place-items: center;
+  color: var(--accent-deep);
+  background: var(--surface-solid);
+  border: 1px solid var(--surface-border);
+  box-shadow: 0 6px 16px -8px oklch(0.4 0.05 55 / 0.45);
+  border-radius: 50%;
+  cursor: pointer;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-6px);
+  transition:
+    opacity 500ms var(--ease-out),
+    transform 500ms var(--ease-out),
+    visibility 0s linear 500ms;
+}
+
+html.is-open .home-btn {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition-delay: 0s;
+}
+
+.home-btn:active {
+  transform: scale(0.94);
+}
+
+.home-btn:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .home-btn:hover {
+    background: var(--bg-deep);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-btn {
+    transition: none;
+  }
+}
