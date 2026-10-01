@@ -27,11 +27,11 @@ El scroll solo cambia de SECCIÓN: tres páginas de 100svh con scroll-snap
 mandatory. Cada sección es un objeto 3D con su propia interacción y la cámara
 vuela de uno a otro (en -z). Las fotos son complemento dentro de paneles.
 
-| Sección | z | Objeto | Interacción |
-| --- | --- | --- | --- |
-| 0 Carta | 0 | Carta con frente y reverso, papel de deseos, cielo de faroles | Girar la carta, tocar el papel, leer faroles |
-| 1 Anillos | -44 | Dos anillos de bronce dorado entrelazados | Tocar uno, la cámara entra y se arrastra para girar el carrusel de paneles |
-| 2 Ramo | -88 | Ramo de novia arrastrable | Panel HTML con vestimenta, cuenta regresiva y RSVP |
+| Sección   | z   | Objeto                                                        | Interacción                                                                |
+| --------- | --- | ------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| 0 Carta   | 0   | Carta con frente y reverso, papel de deseos, cielo de faroles | Girar la carta, tocar el papel, leer faroles                               |
+| 1 Anillos | -44 | Dos anillos de bronce dorado entrelazados                     | Tocar uno, la cámara entra y se arrastra para girar el carrusel de paneles |
+| 2 Ramo    | -88 | Ramo de novia arrastrable                                     | Panel HTML con vestimenta, cuenta regresiva y RSVP                         |
 
 ## Estructura
 
@@ -70,14 +70,14 @@ src/three/textures.js      # Texturas canvas (sobre, sello, tarjeta, papel, plac
   expone métodos y eventos (`on`/`emit`). `experience.sections` es
   `{ card, rings, bouquet }` y existe tras `await experience.ready`.
   - `CardSection`: `flip() openPaper() closePaper() releasePaper() setWishes()
-    launchWish() prepare()`; getters `isFlipped isPaperOpen overlayRect`;
+launchWish() prepare()`; getters `isFlipped isPaperOpen overlayRect`;
     eventos `flip paper lantern layout`.
   - `RingsSection`: `enter(i) exit() step(dir)`; getter `insideIndex`; eventos
     `labels enter exit panel scrolllock`.
   - `BouquetSection`: `celebrate()`; evento `layout`.
 - Cada UI exporta `initCardUi({ section, guest, experience })`,
   `initRingsUi({ section, experience })` o `initBouquetUi({ section, guest,
-  experience })`. `main.js` las llama UNA vez tras `await experience.ready`.
+experience })`. `main.js` las llama UNA vez tras `await experience.ready`.
   Cada una importa su HTML con `?raw` y su CSS, e inyecta el HTML en su
   `#stage-N` antes de buscar nodos. Los estilos de una UI viven en su carpeta,
   no en `style.css`.

@@ -314,7 +314,7 @@ export class GardenProps {
 
   _buildArch() {
     const cx = 0;
-    const cz = -27;
+    const cz = -124;
     const postX = 3.6;
     const postH = 5.8;
     const R = postX;
@@ -394,7 +394,7 @@ export class GardenProps {
       Math.hypot(x, z + 44) < 14 + r ||
       Math.hypot(x, z + 88) < 9 + r ||
       (Math.abs(x) < 8 + r && Math.abs(z) < 9) ||
-      (Math.abs(x) < 6 && z < -3 && z > -36 && !(Math.abs(z + 27) < 3));
+      (Math.abs(x) < 6 && z < -3 && z > -36);
 
     const addBed = (x, z, w, d, planter) => {
       if (bedBlocked(x, z, Math.max(w, d) / 2)) return;
@@ -403,10 +403,10 @@ export class GardenProps {
     };
 
     // Macizos al pie del arco, siguiendo el sendero
-    addBed(-5.4, -27, 3.2, 3.2, false);
-    addBed(5.4, -27, 3.2, 3.2, false);
-    addBed(-7.8, -24, 3, 2.4, false);
-    addBed(7.8, -24, 3, 2.4, false);
+    addBed(-5.4, -124, 3.2, 3.2, false);
+    addBed(5.4, -124, 3.2, 3.2, false);
+    addBed(-7.8, -121, 3, 2.4, false);
+    addBed(7.8, -121, 3, 2.4, false);
     // Jardineras a lo largo del sendero junto a los setos
     for (const side of [-1, 1]) {
       for (let z = -12; z > -130; z -= 7.4) addBed(side * 8.1, z, 2.2, 5.2, true);
@@ -569,9 +569,9 @@ export class GardenProps {
     runs.push([c1, c2, 1.6], [c3, c4, 1.6], [c1, c3, 1.1], [c2, c4, 1.1]);
 
     // Del arco a dos postes laterales
-    const archTop = new THREE.Vector3(-3.6, GROUND_Y + 5.8, -27);
-    const archTopR = new THREE.Vector3(3.6, GROUND_Y + 5.8, -27);
-    runs.push([archTop, a3, 1.4], [archTopR, b3, 1.4]);
+    const archTop = new THREE.Vector3(-3.6, GROUND_Y + 5.8, -124);
+    const archTopR = new THREE.Vector3(3.6, GROUND_Y + 5.8, -124);
+    runs.push([archTop, c3, 1.4], [archTopR, c4, 1.4]);
 
     // Postes
     const poleGeo = new THREE.CylinderGeometry(0.12, 0.18, 1, 6);
@@ -777,7 +777,7 @@ export class GardenProps {
       if (u < 0.3) {
         // Pasillo del arco
         x = rand(-3.4, 3.4);
-        z = rand(-20, -36);
+        z = rand(-117, -131);
       } else if (u < 0.5) {
         // Pasillo de las sillas
         x = rand(-3.8, 3.8);

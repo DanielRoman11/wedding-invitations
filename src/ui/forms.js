@@ -1,4 +1,4 @@
-import { wedding, rsvp } from "../config.js"
+import { wedding } from "../config.js"
 import { sendRsvp, sendWish } from "../api.js"
 
 const $ = (id) => document.getElementById(id)
@@ -49,13 +49,11 @@ const firstName = (full) => full.trim().split(/\s+/)[0]
 
 /**
  * @param {{name:string,isFallback:boolean}} guest
- * @param {(result:{attending:boolean,name:string,people:number}) => void} onDone
+ * @param {(result:{attending:boolean,name:string}) => void} onDone
  */
 export function initRsvpForm(guest, onDone) {
   const form = $("rsvp-form")
   const done = $("rsvp-done")
-  const count = $("people-count")
-  let people = 1
 
   const conditional = [...form.querySelectorAll('[data-when="si"]')]
   const setAttending = (value) => {
@@ -68,24 +66,17 @@ export function initRsvpForm(guest, onDone) {
     if (e.target.name === "attending") setAttending(e.target.value)
   })
 
-  form.querySelectorAll("[data-step]").forEach((btn) =>
-    btn.addEventListener("click", () => {
-      people = Math.min(rsvp.maxPeople, Math.max(1, people + Number(btn.dataset.step)))
-      count.textContent = String(people)
-    }),
-  )
-
-  const renderDone = ({ attending, name, people: n }) => {
+  const renderDone = ({ attending, name }) => {
     const first = firstName(name)
     $("rsvp-done-title").textContent = attending
       ? `¡Gracias, ${first}!`
       : `Gracias por avisarnos, ${first}`
     $("rsvp-done-text").textContent = attending
-      ? `Quedó registrada tu asistencia para ${n} ${n === 1 ? "persona" : "personas"}. Nos vemos el ${wedding.dateLabel}.`
+      ? `Quedó registrada tu asistencia. Nos vemos el ${wedding.dateLabel}.`
       : "Lamentamos que no puedas acompañarnos. Te llevamos en el corazón."
 
     const intro = attending
-      ? `¡Hola! Soy ${name} y confirmo mi asistencia (${n} ${n === 1 ? "persona" : "personas"}) a la boda de ${wedding.groom} & ${wedding.bride}`
+      ? `¡Hola! Soy ${name} y confirmo mi asistencia a la boda de ${wedding.groom} & ${wedding.bride}`
       : `¡Hola! Soy ${name} y lamentablemente no podré asistir a la boda de ${wedding.groom} & ${wedding.bride}`
     $("rsvp-whatsapp").href = `https://wa.me/${wedding.whatsapp}?text=${encodeURIComponent(intro)}`
 
@@ -106,13 +97,12 @@ export function initRsvpForm(guest, onDone) {
       await sendRsvp({
         name,
         attending,
-        people: attending === "si" ? people : 0,
         allergies: data.get("allergies") || "",
         comment: data.get("comment") || "",
         website: data.get("website") || "",
         guest: guest.isFallback ? "" : guest.name,
       })
-      const result = { attending: attending === "si", name, people }
+      const result = { attending: attending === "si", name }
       save(result)
       renderDone(result)
       onDone(result)
@@ -133,8 +123,6 @@ export function initRsvpForm(guest, onDone) {
       radio.checked = true
       setAttending(radio.value)
     }
-    people = saved.people || 1
-    count.textContent = String(people)
     renderDone(saved)
   }
 }

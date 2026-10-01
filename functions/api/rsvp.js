@@ -18,20 +18,15 @@ export async function onRequestPost({ request, env }) {
 
   const name = clean(body.name, 80)
   const attending = body.attending === "si" ? "Sí" : body.attending === "no" ? "No" : ""
-  const people = Math.round(Number(body.people))
 
   if (!name) return json({ error: "Escribe tu nombre." }, 400)
   if (!attending) return json({ error: "Cuéntanos si nos acompañas." }, 400)
-  if (attending === "Sí" && !(people >= 1 && people <= 10)) {
-    return json({ error: "Indica cuántas personas asistirán." }, 400)
-  }
 
   try {
     await appendRow(env, "RSVP", [
       bogotaNow(),
       name,
       attending,
-      attending === "Sí" ? people : 0,
       clean(body.allergies, 300),
       clean(body.comment, 300),
       clean(body.guest, 80),

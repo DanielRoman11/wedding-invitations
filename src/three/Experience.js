@@ -15,7 +15,7 @@ import { BouquetSection } from "./sections/BouquetSection.js"
 const TAP_MAX_MOVE = 8 // px: más que esto ya es un arrastre
 const TAP_MAX_TIME = 600 // ms
 const SWIPE_TO_OPEN = 28 // px de deslizamiento que abren el sobre
-const FIREWORK_COLORS = [palette.blush, palette.caramel, palette.ivory, palette.sage, 0xb9a5d6]
+const FIREWORK_COLORS = [palette.gold, palette.caramel, palette.blush, palette.sage, 0xb9a5d6]
 
 /**
  * Orquesta la escena. El scroll de la página solo cambia de SECCIÓN:
@@ -178,7 +178,6 @@ export class Experience {
     this.scene.add(this.sparkles.points)
 
     this.fireworks = new Fireworks()
-    this.scene.add(this.fireworks.points)
 
     this.envelope = new Envelope(this.guest.name)
     this.scene.add(this.envelope.group)
@@ -461,24 +460,12 @@ export class Experience {
   /** Fuegos artificiales y ráfaga de pétalos */
   celebrate() {
     if (this.reducedMotion) return
-    const cam = this.camera
     for (let i = 0; i < 7; i++) {
       gsap.delayedCall(i * 0.42, () => {
-        const ray = new THREE.Vector3(
-          THREE.MathUtils.randFloat(-0.78, 0.78),
-          THREE.MathUtils.randFloat(0.05, 0.75),
-          0.5,
-        )
-          .unproject(cam)
-          .sub(cam.position)
-          .normalize()
-        this.fireworks.launch(
-          cam.position.clone().addScaledVector(ray, THREE.MathUtils.randFloat(13, 18)),
-          FIREWORK_COLORS[i % FIREWORK_COLORS.length],
-        )
+        this.fireworks.launch(FIREWORK_COLORS[i % FIREWORK_COLORS.length])
       })
     }
-    this.petals?.gust(0, 0.1, cam, 2)
+    this.petals?.gust(0, 0.1, this.camera, 2)
     this.sections?.bouquet.celebrate?.()
   }
 

@@ -101,11 +101,35 @@ de celular al redimensionarlas a ciegas.
 
 ## Despliegue
 
-`npm run build` produce `dist/` estático. Funciona en:
+El backend de RSVP y deseos usa Cloudflare Pages Functions. Para que los
+formularios guarden respuestas, despliega el proyecto como Cloudflare Pages,
+con `npm run build` como comando de compilación y `dist` como directorio de
+salida. El directorio `functions/` debe permanecer junto al código fuente para
+que Pages publique las funciones `/api/rsvp` y `/api/wishes`.
 
-- **Netlify / Vercel**: arrastra la carpeta `dist` o conecta el repo.
-- **GitHub Pages**: sube el contenido de `dist` a la rama `gh-pages`.
-- **Cualquier hosting compartido**: sube `dist` por FTP al public_html.
+Configura estos secretos en el proyecto de Cloudflare Pages:
+
+- `GOOGLE_SERVICE_ACCOUNT_KEY`: credencial JSON de una cuenta de servicio de Google.
+- `GOOGLE_SHEET_ID`: identificador de la hoja de cálculo.
+
+Comparte la hoja con el correo de la cuenta de servicio, con permiso de edición.
+Para cargar los secretos desde la terminal:
+
+```bash
+npx wrangler pages secret put GOOGLE_SERVICE_ACCOUNT_KEY --project-name wedding-invitations
+npx wrangler pages secret put GOOGLE_SHEET_ID --project-name wedding-invitations
+```
+
+Para probar las funciones localmente, compila y arranca el servidor de Pages:
+
+```bash
+npm run build
+npx wrangler pages dev dist
+```
+
+Las credenciales locales van en `.dev.vars`, que está excluido de Git. `npm run dev`
+y los demás hostings estáticos sirven la invitación, pero no ejecutan estas
+funciones ni guardan las respuestas.
 
 La base es relativa (`./`), así que funciona también en subcarpetas.
 

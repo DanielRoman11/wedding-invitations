@@ -103,11 +103,6 @@ export const gifts = {
   accounts: [],
 };
 
-/** Formulario de RSVP */
-export const rsvp = {
-  maxPeople: 6, // máximo de personas que puede indicar un invitado (incluyéndose)
-};
-
 /** Para agregar la boda al calendario del invitado */
 export const calendar = {
   utcOffset: "-05:00", // Colombia (sin horario de verano)

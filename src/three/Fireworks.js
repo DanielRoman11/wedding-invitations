@@ -1,120 +1,210 @@
-import * as THREE from "three"
-import { palette } from "../config.js"
-
-/** Colores de apoyo que se mezclan con el del disparo */
-const CONFETTI = [palette.blush, palette.caramel, palette.ivory, palette.sage, 0xb9a5d6]
-
 /**
- * Estallido de confeti y pétalos de celebración (al confirmar asistencia).
- * Un único buffer circular de partículas con color propio; cada
- * `launch` dispara una esfera de confeti que cae con gravedad.
- * Mezcla normal: de día los destellos aditivos se borran.
+ * Fuegos artificiales 2D sobre un <canvas> transparente a pantalla completa.
+ * Sustituye al sistema 3D de puntos: los cohetes suben desde abajo, dejan una
+ * estela y estallan en un anillo de destellos que caen con gravedad y arrastre.
+ *
+ * El cielo es claro (tarde dorada), así que se dibuja con mezcla normal y
+ * colores saturados; la estela se consigue desvaneciendo el fotograma anterior
+ * con "destination-out", de modo que la escena 3D de debajo siempre se ve.
  */
+
+const VARIETY = {
+  gold: [217, 163, 74],
+  caramel: [185, 133, 88],
+  bronze: [192, 138, 84],
+  blush: [232, 168, 156],
+  rose: [233, 184, 164],
+  sage: [156, 175, 136],
+  plum: [185, 165, 214],
+}
+
+const VARIETY_LIST = Object.values(VARIETY)
+
+const hexToRgb = (hex) => [(hex >> 16) & 255, (hex >> 8) & 255, hex & 255]
+const rgba = (c, a) => `rgba(${c[0]},${c[1]},${c[2]},${a})`
+const rand = (a, b) => a + Math.random() * (b - a)
+
 export class Fireworks {
   constructor() {
-    this.max = 1200
-    this.cursor = 0
-    this.positions = new Float32Array(this.max * 3)
-    this.colors = new Float32Array(this.max * 3)
-    this.lifes = new Float32Array(this.max)
-    this.velocities = new Float32Array(this.max * 3)
+    this.canvas = document.createElement("canvas")
+    this.canvas.setAttribute("aria-hidden", "true")
+    this.canvas.style.cssText =
+      "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:15;"
+    document.body.appendChild(this.canvas)
+    this.ctx = this.canvas.getContext("2d")
 
-    const geo = new THREE.BufferGeometry()
-    geo.setAttribute("position", new THREE.BufferAttribute(this.positions, 3))
-    geo.setAttribute("aColor", new THREE.BufferAttribute(this.colors, 3))
-    geo.setAttribute("aLife", new THREE.BufferAttribute(this.lifes, 1))
+    this.rockets = []
+    this.sparks = []
+    this.flashes = []
 
-    const mat = new THREE.ShaderMaterial({
-      transparent: true,
-      depthWrite: false,
-      // Mezcla normal: sobre el cielo claro las chispas sumadas se borrarían
-      blending: THREE.NormalBlending,
-      vertexShader: /* glsl */ `
-        attribute vec3 aColor;
-        attribute float aLife;
-        varying vec3 vColor;
-        varying float vLife;
-        void main() {
-          vColor = aColor;
-          vLife = aLife;
-          vec4 mv = modelViewMatrix * vec4(position, 1.0);
-          gl_PointSize = (2.2 + 3.6 * aLife) * (110.0 / -mv.z);
-          gl_Position = projectionMatrix * mv;
-        }
-      `,
-      fragmentShader: /* glsl */ `
-        varying vec3 vColor;
-        varying float vLife;
-        void main() {
-          float d = length(gl_PointCoord - 0.5);
-          // Confeti con borde duro y un borde más oscuro para leerse sobre crema
-          float a = smoothstep(0.5, 0.38, d) * clamp(vLife * 1.5, 0.0, 1.0);
-          float edge = smoothstep(0.3, 0.46, d);
-          gl_FragColor = vec4(mix(vColor, vColor * 0.78, edge), a);
-        }
-      `,
+    this._w = 0
+    this._h = 0
+    this._linger = 0
+    this._drawn = false
+
+    this._onResize = () => this.#resize()
+    window.addEventListener("resize", this._onResize)
+    this.#resize()
+  }
+
+  #resize() {
+    const dpr = Math.min(window.devicePixelRatio || 1, 2)
+    this._w = window.innerWidth
+    this._h = window.innerHeight
+    this.canvas.width = Math.round(this._w * dpr)
+    this.canvas.height = Math.round(this._h * dpr)
+    this.ctx.setTransform(dpr, 0, 0, dpr, 0, 0)
+  }
+
+  /** Lanza un cohete que estallará en la parte alta del cielo */
+  launch(hex) {
+    this.rockets.push({
+      x: this._w * rand(0.3, 0.7),
+      y: this._h + 10,
+      vx: rand(-0.06, 0.06) * this._w,
+      vy: -this._h * rand(0.7, 1),
+      color: hexToRgb(hex),
+      explodeY: this._h * rand(0.12, 0.34),
     })
-
-    this.points = new THREE.Points(geo, mat)
-    this.points.frustumCulled = false
-    this.points.visible = false
-    this.active = false
   }
 
-  /** Una explosión en `origin` (mundo) del color hex dado */
-  launch(origin, hex, count = 80) {
-    const color = new THREE.Color(hex)
-    const dir = new THREE.Vector3()
-    for (let n = 0; n < count; n++) {
-      const i = this.cursor
-      this.cursor = (this.cursor + 1) % this.max
-
-      dir.set(
-        THREE.MathUtils.randFloatSpread(2),
-        THREE.MathUtils.randFloatSpread(2),
-        THREE.MathUtils.randFloatSpread(2),
-      ).normalize()
-      const speed = THREE.MathUtils.randFloat(2.2, 5.2)
-
-      this.positions.set([origin.x, origin.y, origin.z], i * 3)
-      this.velocities.set([dir.x * speed, dir.y * speed, dir.z * speed], i * 3)
-      // Mayoría del color del disparo; el resto, confeti de la paleta cálida
-      const tint = Math.random() < 0.55 ? color : new THREE.Color(CONFETTI[(Math.random() * CONFETTI.length) | 0])
-      this.colors.set([tint.r, tint.g, tint.b], i * 3)
-      this.lifes[i] = THREE.MathUtils.randFloat(0.8, 1.1)
+  #explode(x, y, color) {
+    const count = 120
+    const shell = rand(0.12, 0.24) * this._h
+    for (let i = 0; i < count; i++) {
+      const a = Math.random() * Math.PI * 2
+      const speed = shell * rand(0.7, 1.15)
+      const life = rand(0.9, 1.9)
+      this.sparks.push({
+        x,
+        y,
+        vx: Math.cos(a) * speed,
+        vy: Math.sin(a) * speed,
+        life,
+        max: life,
+        size: rand(1.2, 2.4),
+        color: Math.random() < 0.72 ? color : VARIETY_LIST[(Math.random() * VARIETY_LIST.length) | 0],
+      })
     }
-    this.active = true
-    this.points.visible = true
+    this.flashes.push({ x, y, r: rand(6, 14), life: 0.32, max: 0.32, color })
   }
 
-  update(delta) {
-    if (!this.active) return
-    let alive = false
-    for (let i = 0; i < this.max; i++) {
-      if (this.lifes[i] <= 0) continue
-      alive = true
-      this.lifes[i] -= delta * 0.4
-      const k = i * 3
-      this.velocities[k] *= 1 - delta * 0.9
-      this.velocities[k + 1] = this.velocities[k + 1] * (1 - delta * 0.9) - 4.2 * delta
-      this.velocities[k + 2] *= 1 - delta * 0.9
-      this.positions[k] += this.velocities[k] * delta
-      this.positions[k + 1] += this.velocities[k + 1] * delta
-      this.positions[k + 2] += this.velocities[k + 2] * delta
-      if (this.lifes[i] < 0) this.lifes[i] = 0
+  #stepRockets(dt) {
+    const { ctx } = this
+    for (let i = this.rockets.length - 1; i >= 0; i--) {
+      const r = this.rockets[i]
+      const px = r.x
+      const py = r.y
+      r.x += r.vx * dt
+      r.y += r.vy * dt
+      r.vy += 320 * dt // el cohete frena al subir
+
+      // Estela
+      ctx.strokeStyle = rgba(r.color, 0.55)
+      ctx.lineWidth = 1.6
+      ctx.beginPath()
+      ctx.moveTo(px, py)
+      ctx.lineTo(r.x, r.y)
+      ctx.stroke()
+
+      // Cabeza brillante
+      ctx.fillStyle = rgba(r.color, 0.95)
+      ctx.beginPath()
+      ctx.arc(r.x, r.y, 2.2, 0, Math.PI * 2)
+      ctx.fill()
+
+      if (r.y <= r.explodeY || r.y < -20) {
+        this.#explode(r.x, r.y, r.color)
+        this.rockets.splice(i, 1)
+      }
     }
-    const geo = this.points.geometry
-    geo.attributes.position.needsUpdate = true
-    geo.attributes.aLife.needsUpdate = true
-    geo.attributes.aColor.needsUpdate = true
-    if (!alive) {
-      this.active = false
-      this.points.visible = false
+  }
+
+  #stepSparks(dt) {
+    const { ctx } = this
+    for (let i = this.sparks.length - 1; i >= 0; i--) {
+      const s = this.sparks[i]
+      s.life -= dt
+      if (s.life <= 0) {
+        this.sparks.splice(i, 1)
+        continue
+      }
+      s.vx *= 1 - 1.7 * dt
+      s.vy *= 1 - 1.7 * dt
+      s.vy += 420 * dt
+      s.x += s.vx * dt
+      s.y += s.vy * dt
+
+      const a = Math.min(1, (s.life / s.max) * 1.3)
+      // Halo suave
+      ctx.globalAlpha = a * 0.28
+      ctx.fillStyle = rgba(s.color, 1)
+      ctx.beginPath()
+      ctx.arc(s.x, s.y, s.size * 2.4, 0, Math.PI * 2)
+      ctx.fill()
+      // Núcleo
+      ctx.globalAlpha = a
+      ctx.beginPath()
+      ctx.arc(s.x, s.y, s.size, 0, Math.PI * 2)
+      ctx.fill()
     }
+    ctx.globalAlpha = 1
+  }
+
+  #stepFlashes(dt) {
+    const { ctx } = this
+    for (let i = this.flashes.length - 1; i >= 0; i--) {
+      const f = this.flashes[i]
+      f.life -= dt
+      if (f.life <= 0) {
+        this.flashes.splice(i, 1)
+        continue
+      }
+      const t = f.life / f.max
+      const r = f.r + (1 - t) * 46
+      const g = ctx.createRadialGradient(f.x, f.y, 0, f.x, f.y, r)
+      g.addColorStop(0, rgba(f.color, 0.85 * t))
+      g.addColorStop(1, rgba(f.color, 0))
+      ctx.fillStyle = g
+      ctx.fillRect(f.x - r, f.y - r, r * 2, r * 2)
+    }
+  }
+
+  update(dt) {
+    const has = this.rockets.length || this.sparks.length || this.flashes.length
+    if (has) {
+      this._linger = 0.9
+      this._drawn = true
+    } else if (!this._drawn) {
+      return
+    }
+
+    dt = Math.min(dt, 0.05)
+    this._linger -= dt
+    if (!has && this._linger <= 0) {
+      this.ctx.clearRect(0, 0, this._w, this._h)
+      this._drawn = false
+      return
+    }
+
+    const { ctx, _w: w, _h: h } = this
+
+    // Desvanece el fotograma anterior para dejar estelas suaves
+    ctx.globalCompositeOperation = "destination-out"
+    ctx.fillStyle = "rgba(0,0,0,0.22)"
+    ctx.fillRect(0, 0, w, h)
+    ctx.globalCompositeOperation = "source-over"
+
+    this.#stepRockets(dt)
+    this.#stepSparks(dt)
+    this.#stepFlashes(dt)
   }
 
   dispose() {
-    this.points.geometry.dispose()
-    this.points.material.dispose()
+    window.removeEventListener("resize", this._onResize)
+    this.canvas.remove()
+    this.rockets.length = 0
+    this.sparks.length = 0
+    this.flashes.length = 0
   }
 }
