@@ -53,6 +53,7 @@ src/three/world.js         # Constantes: STAGES, CARD_REST, CARD_W/H, RINGS_Z, B
 src/three/Garden.js        # Fondo: cielo, suelo, sendero, colinas, luz de sol (compone GardenProps)
 src/three/GardenProps.js   # Árboles, setos, arco floral, flores, guirnaldas, sillas, mariposas
 src/three/Experience.js    # Núcleo: renderer, escena, luces, fases, vuelos de cámara, sections
+src/three/ScrollSnap.js    # Scroll por páginas en táctil (un swipe = siguiente página)
 src/three/sections/        # Section.js (clase base), CardSection, RingsSection, BouquetSection
 src/three/Envelope.js      # Sobre y tarjeta; open() deja la tarjeta en CARD_REST
 src/three/Rings.js         # Anillos y paneles giratorios
@@ -89,6 +90,9 @@ experience })`. `main.js` las llama UNA vez tras `await experience.ready`.
 - Scroll: tres anclas `#sec-0..2` (100svh, `scroll-snap-align: start`,
   `scroll-snap-stop: always`) que son solo espaciadores. El núcleo fija
   `html[data-stage]` y la clase `is-active` en el `#stage-N` correspondiente.
+  En táctil `ScrollSnap` desactiva la inercia del navegador sobre el canvas
+  (`touch-action: none`) y salta a la página siguiente/anterior con un solo
+  gesto, igual de "fijo" que en escritorio.
 - `.stage` es `position: fixed`, `pointer-events: none`, invisible salvo
   `.is-active` (transición 400ms con `--ease-out`). Los hijos interactivos
   ponen `pointer-events: auto`.

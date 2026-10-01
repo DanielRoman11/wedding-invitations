@@ -112,6 +112,12 @@ body {
   touch-action: pan-y;
 }
 
+html.is-open #scene {
+  /* En móvil controlamos el scroll por páginas desde JS: un deslizamiento
+     = una sección, sin inercia a medio camino. */
+  touch-action: none;
+}
+
 /* ----------------------------------------------------------------
    Loader
    ---------------------------------------------------------------- */

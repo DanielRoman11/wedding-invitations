@@ -11,6 +11,7 @@ import { CARD_REST, STAGES } from "./world.js"
 import { CardSection } from "./sections/CardSection.js"
 import { RingsSection } from "./sections/RingsSection.js"
 import { BouquetSection } from "./sections/BouquetSection.js"
+import { ScrollSnap } from "./ScrollSnap.js"
 
 const TAP_MAX_MOVE = 8 // px: más que esto ya es un arrastre
 const TAP_MAX_TIME = 600 // ms
@@ -60,6 +61,7 @@ export class Experience {
     this.#initLights()
     this.#initObjects()
     this.#bindEvents()
+    this.#initScrollSnap()
 
     this.renderer.setAnimationLoop(() => this.#tick())
   }
@@ -254,10 +256,30 @@ export class Experience {
     const index = Math.min(STAGES - 1, Math.max(0, i))
     // La carta ocupa varias páginas: se busca la primera de la sección pedida
     const page = Math.max(0, (this._pageStages ?? []).indexOf(index))
+    this.#snapToPage(page)
+  }
+
+  #snapToPage(page) {
+    const n = (this._pageStages ?? []).length || 1
+    const p = Math.max(0, Math.min(n - 1, page))
     window.scrollTo({
-      top: page * window.innerHeight,
+      top: p * window.innerHeight,
       behavior: this.reducedMotion ? "auto" : "smooth",
     })
+  }
+
+  #initScrollSnap() {
+    this.snap = new ScrollSnap({
+      getPhase: () => this.phase,
+      getLocked: () => document.documentElement.classList.contains("is-modal"),
+      getPageCount: () => (this._pageStages ?? []).length || 1,
+      getCurrentPage: () => {
+        const n = (this._pageStages ?? []).length || 1
+        return Math.max(0, Math.min(n - 1, Math.round(window.scrollY / window.innerHeight)))
+      },
+      goToPage: (page) => this.#snapToPage(page),
+    })
+    this.snap.bind()
   }
 
   #setStage(next, force = false) {
@@ -601,6 +623,7 @@ export class Experience {
 
   dispose() {
     this.renderer.setAnimationLoop(null)
+    this.snap?.unbind()
     for (const s of this.#list()) s.dispose()
     this.envelope.dispose()
     this.fireworks.dispose()

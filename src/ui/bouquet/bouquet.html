@@ -3,107 +3,111 @@
     Arrastra el ramo para girarlo
   </p>
 
-  <article class="panel bq-panel" aria-label="Confirmar asistencia">
-    <header class="bq-head">
-      <p class="eyebrow eyebrow--paper">Confirmación</p>
-      <h2 class="title title--paper bq-title">¿Nos acompañas?</h2>
-      <p class="bq-message" id="bq-message" hidden></p>
-      <p class="bq-count" id="bq-count" role="timer" aria-live="off">
-        <span class="bq-count__lead" id="bq-count-lead"></span>
-        <span class="bq-count__fine" id="bq-count-fine"></span>
-      </p>
-    </header>
+  <div class="bq-panel__wrap">
+    <article class="panel bq-panel" aria-label="Confirmar asistencia">
+      <div class="bq-panel__scroll">
+        <header class="bq-head">
+          <p class="eyebrow eyebrow--paper">Confirmación</p>
+          <h2 class="title title--paper bq-title">¿Nos acompañas?</h2>
+          <p class="bq-message" id="bq-message" hidden></p>
+          <p class="bq-count" id="bq-count" role="timer" aria-live="off">
+            <span class="bq-count__lead" id="bq-count-lead"></span>
+            <span class="bq-count__fine" id="bq-count-fine"></span>
+          </p>
+        </header>
 
-    <section class="bq-dress" aria-label="Vestimenta">
-      <svg class="bq-orn" viewBox="0 0 120 14" aria-hidden="true">
-        <path
-          d="M2 7h44M74 7h44"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1"
-          stroke-linecap="round"
-        />
-        <path
-          d="M60 1l5 6-5 6-5-6z"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="1"
-        />
-        <circle cx="50" cy="7" r="1.4" fill="currentColor" />
-        <circle cx="70" cy="7" r="1.4" fill="currentColor" />
-      </svg>
-      <p class="bq-dress__label">Vestimenta</p>
-      <p class="bq-dress__value" id="bq-dress"></p>
-    </section>
+        <section class="bq-dress" aria-label="Vestimenta">
+          <svg class="bq-orn" viewBox="0 0 120 14" aria-hidden="true">
+            <path
+              d="M2 7h44M74 7h44"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1"
+              stroke-linecap="round"
+            />
+            <path
+              d="M60 1l5 6-5 6-5-6z"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1"
+            />
+            <circle cx="50" cy="7" r="1.4" fill="currentColor" />
+            <circle cx="70" cy="7" r="1.4" fill="currentColor" />
+          </svg>
+          <p class="bq-dress__label">Vestimenta</p>
+          <p class="bq-dress__value" id="bq-dress"></p>
+        </section>
 
-    <form id="rsvp-form" class="form" novalidate>
-      <label class="field">
-        <span>Tu nombre completo</span>
-        <input name="name" required maxlength="80" autocomplete="name" />
-      </label>
+        <form id="rsvp-form" class="form" novalidate>
+          <label class="field">
+            <span>Tu nombre completo</span>
+            <input name="name" required maxlength="80" autocomplete="name" />
+          </label>
 
-      <fieldset class="choice">
-        <legend>¿Podrás asistir?</legend>
-        <label class="choice__opt">
-          <input type="radio" name="attending" value="si" />
-          <span>¡Sí, allí estaré!</span>
-        </label>
-        <label class="choice__opt">
-          <input type="radio" name="attending" value="no" />
-          <span>No podré acompañarlos</span>
-        </label>
-      </fieldset>
+          <fieldset class="choice">
+            <legend>¿Podrás asistir?</legend>
+            <label class="choice__opt">
+              <input type="radio" name="attending" value="si" />
+              <span>¡Sí, allí estaré!</span>
+            </label>
+            <label class="choice__opt">
+              <input type="radio" name="attending" value="no" />
+              <span>No podré acompañarlos</span>
+            </label>
+          </fieldset>
 
-      <label class="field" data-when="si" hidden>
-        <span>Alergias o restricciones alimentarias</span>
-        <textarea
-          name="allergies"
-          rows="3"
-          maxlength="300"
-          placeholder="Ej: alergia al maní, vegetariano, celiaquía. Indica de quién es. Si no hay, déjalo vacío."
-        ></textarea>
-      </label>
+          <label class="field" data-when="si" hidden>
+            <span>Alergias o restricciones alimentarias</span>
+            <textarea
+              name="allergies"
+              rows="3"
+              maxlength="300"
+              placeholder="Ej: alergia al maní, vegetariano, celiaquía. Indica de quién es. Si no hay, déjalo vacío."
+            ></textarea>
+          </label>
 
-      <label class="field">
-        <span>Un mensaje para los novios (opcional)</span>
-        <textarea name="comment" rows="2" maxlength="300"></textarea>
-      </label>
+          <label class="field">
+            <span>Un mensaje para los novios (opcional)</span>
+            <textarea name="comment" rows="2" maxlength="300"></textarea>
+          </label>
 
-      <input
-        class="hp"
-        type="text"
-        name="website"
-        tabindex="-1"
-        autocomplete="off"
-        aria-hidden="true"
-      />
-      <p class="form__error" role="alert" hidden></p>
-      <button class="btn btn--primary" type="submit">
-        Enviar confirmación
-      </button>
-    </form>
+          <input
+            class="hp"
+            type="text"
+            name="website"
+            tabindex="-1"
+            autocomplete="off"
+            aria-hidden="true"
+          />
+          <p class="form__error" role="alert" hidden></p>
+          <button class="btn btn--primary" type="submit">
+            Enviar confirmación
+          </button>
+        </form>
 
-    <div class="done" id="rsvp-done" hidden>
-      <p class="done__title" id="rsvp-done-title"></p>
-      <p class="panel__text" id="rsvp-done-text"></p>
-      <div class="actions">
-        <a
-          id="rsvp-whatsapp"
-          class="btn btn--ghost"
-          href="#"
-          target="_blank"
-          rel="noopener"
-          >Avisar por WhatsApp</a
-        >
-        <button type="button" class="btn btn--ghost" id="rsvp-edit">
-          Cambiar mi respuesta
-        </button>
+        <div class="done" id="rsvp-done" hidden>
+          <p class="done__title" id="rsvp-done-title"></p>
+          <p class="panel__text" id="rsvp-done-text"></p>
+          <div class="actions">
+            <a
+              id="rsvp-whatsapp"
+              class="btn btn--ghost"
+              href="#"
+              target="_blank"
+              rel="noopener"
+              >Avisar por WhatsApp</a
+            >
+            <button type="button" class="btn btn--ghost" id="rsvp-edit">
+              Cambiar mi respuesta
+            </button>
+          </div>
+        </div>
+
+        <footer class="bq-sign">
+          <p class="bq-sign__names" id="bq-names"></p>
+          <p class="bq-sign__date" id="bq-date"></p>
+        </footer>
       </div>
-    </div>
-
-    <footer class="bq-sign">
-      <p class="bq-sign__names" id="bq-names"></p>
-      <p class="bq-sign__date" id="bq-date"></p>
-    </footer>
-  </article>
+    </article>
+  </div>
 </div>

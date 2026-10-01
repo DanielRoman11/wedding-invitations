@@ -13,15 +13,10 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: 54svh;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  -webkit-overflow-scrolling: touch;
-  padding: var(--bq-pad);
-  padding-bottom: max(var(--bq-pad), env(safe-area-inset-bottom));
+  height: 92svh;
+  padding: 0;
   border-radius: 22px 22px 0 0;
   outline-offset: -7px;
-  scrollbar-width: thin;
   opacity: 0;
   transform: translateY(24px);
   transition:
@@ -35,6 +30,28 @@
   transition-delay: 150ms;
 }
 
+.bq-panel__scroll {
+  height: 100%;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  padding: var(--bq-pad);
+  padding-bottom: 0;
+  scroll-padding: var(--bq-pad);
+  /* Recorte duro en el filete (7px): el contenido nunca se muestra desde
+     el outline hacia afuera, ni siquiera con momentum scrolling en iOS. */
+  clip-path: inset(7px round 15px 15px 0 0);
+  scrollbar-width: thin;
+}
+
+/* Espaciador inferior dentro del scroll: conserva el mismo hueco que el
+   padding interno aunque el contenido sea más alto que el panel. */
+.bq-panel__scroll::after {
+  content: "";
+  display: block;
+  height: max(var(--bq-pad), env(safe-area-inset-bottom));
+}
+
 @media (min-aspect-ratio: 85/100) {
   .bq-panel {
     left: auto;
@@ -45,8 +62,15 @@
     height: auto;
     max-height: 88svh;
     border-radius: 14px;
-    padding-bottom: var(--bq-pad);
     transform: translateY(calc(-50% + 24px));
+  }
+  .bq-panel__scroll {
+    height: auto;
+    max-height: 88svh;
+    clip-path: inset(7px round 7px);
+  }
+  .bq-panel__scroll::after {
+    height: var(--bq-pad);
   }
   .stage.is-active .bq-panel {
     transform: translateY(-50%);

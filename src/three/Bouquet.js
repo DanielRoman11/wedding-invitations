@@ -336,8 +336,9 @@ export class Bouquet {
       const mat = new THREE.MeshBasicMaterial({ map: tex, toneMapped: false, side: THREE.DoubleSide })
       this.disposables.push(tex, mat)
       const mesh = new THREE.Mesh(geo, mat)
+      mesh.frustumCulled = false
       mesh.userData = { phase: (i / POLAROIDS) * Math.PI * 2, y: -0.6 + (i % 2) * 1.6 }
-      this.group.add(mesh)
+      this.body.add(mesh)
       this.polaroids.push(mesh)
     }
   }
@@ -366,8 +367,8 @@ export class Bouquet {
     // Las polaroids orbitan despacio y siempre dan la cara
     for (const p of this.polaroids) {
       const { phase, y } = p.userData
-      const a = phase + (still ? 0 : elapsed * 0.22)
-      p.position.set(Math.sin(a) * 2.9, y + (still ? 0 : Math.sin(elapsed * 0.8 + phase) * 0.08), Math.cos(a) * 2.9)
+      const a = phase + (still ? 0 : elapsed * 0.28)
+      p.position.set(Math.sin(a) * 2.9, y + (still ? 0 : Math.sin(elapsed * 0.8 + phase) * 0.12), Math.cos(a) * 2.9)
       p.rotation.set(0, a, Math.sin(phase) * 0.1)
       const s2 = 0.72
       p.scale.setScalar(s2)
