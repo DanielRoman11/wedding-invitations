@@ -20,6 +20,7 @@ export function initRingsUi({ section }) {
   const dots = stage.querySelector(".ring-dots")
   const drag = stage.querySelector(".ring-drag")
   const live = stage.querySelector(".ring-live")
+  const next = stage.querySelector(".ring-step--next")
 
   const texts = Array.isArray(config.ringLabels)
     ? config.ringLabels
@@ -34,7 +35,12 @@ export function initRingsUi({ section }) {
 
   stage.querySelector(".ring-back").addEventListener("click", () => section.exit())
   stage.querySelector(".ring-step--prev").addEventListener("click", () => section.step(-1))
-  stage.querySelector(".ring-step--next").addEventListener("click", () => section.step(1))
+  let currentIndex = 0
+  let currentCount = 0
+  next.addEventListener("click", () => {
+    if (currentIndex === currentCount - 1) section.exit()
+    else section.step(1)
+  })
 
   let dragTimer = 0
   const hideDrag = () => {
@@ -71,9 +77,16 @@ export function initRingsUi({ section }) {
     hud.setAttribute("aria-hidden", "true")
     live.textContent = ""
     hideDrag()
+    next.classList.remove("is-return")
+    next.setAttribute("aria-label", "Panel siguiente")
   })
 
   section.on("panel", ({ index, count, title: t, text }) => {
+    currentIndex = index
+    currentCount = count
+    const isLast = index === count - 1
+    next.classList.toggle("is-return", isLast)
+    next.setAttribute("aria-label", isLast ? "Volver" : "Panel siguiente")
     title.textContent = t || ""
     live.textContent = [t, text].filter(Boolean).join(". ")
     if (dots.children.length !== count) {

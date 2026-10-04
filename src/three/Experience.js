@@ -11,6 +11,7 @@ import { CARD_REST, STAGES } from "./world.js"
 import { CardSection } from "./sections/CardSection.js"
 import { RingsSection } from "./sections/RingsSection.js"
 import { BouquetSection } from "./sections/BouquetSection.js"
+import { ArchSection } from "./sections/ArchSection.js"
 import { ScrollSnap } from "./ScrollSnap.js"
 
 const TAP_MAX_MOVE = 8 // px: más que esto ya es un arrastre
@@ -23,7 +24,7 @@ const FIREWORK_COLORS = [palette.gold, palette.caramel, palette.blush, palette.s
  *
  *   fase "sealed"  → sobre flotando bajo un foco; el scroll está bloqueado
  *   fase "opening" → coreografía de apertura; la tarjeta queda frente a la cámara
- *   fase "open"    → tres anclas HTML (`#sec-0..2`); `Journey` vuela de una a otra
+ *   fase "open"    → cuatro anclas HTML; `Journey` vuela de una a otra
  *                    y cada sección (carta, anillos, ramo) gestiona su interacción
  *
  * callbacks: onOpenStart, onOpened, onStage(i)
@@ -66,7 +67,7 @@ export class Experience {
     this.renderer.setAnimationLoop(() => this.#tick())
   }
 
-  /** Índice de la sección activa (0 carta, 1 anillos, 2 ramo) */
+  /** Índice de la sección activa (0 carta, 1 anillos, 2 ramo, 3 arco) */
   get stage() {
     return Math.max(0, this._stage)
   }
@@ -201,7 +202,9 @@ export class Experience {
         card: new CardSection(this.ctx, { card: this.envelope.card }),
         rings: new RingsSection(this.ctx),
         bouquet: new BouquetSection(this.ctx),
+        arch: new ArchSection(this.ctx),
       }
+      this.sections.card.on("wish", (wish) => this.sections.arch.addWish(wish))
       // Dentro de un anillo o con el papel de deseos abierto, la página no scrollea
       const locks = { rings: false, card: false }
       const applyLock = () =>
@@ -219,7 +222,9 @@ export class Experience {
   }
 
   #list() {
-    return this.sections ? [this.sections.card, this.sections.rings, this.sections.bouquet] : []
+    return this.sections
+      ? [this.sections.card, this.sections.rings, this.sections.bouquet, this.sections.arch]
+      : []
   }
 
   /* ------------------------ recorrido ------------------------ */

@@ -1,5 +1,5 @@
 /**
- * Base de las tres secciones 3D (carta, anillos, ramo). Es un emisor de
+ * Base de las cuatro secciones 3D (carta, anillos, ramo, arco). Es un emisor de
  * eventos mínimo más los ganchos que `Experience` llama. Las subclases
  * sobrescriben lo que necesiten; todo tiene un valor por defecto inofensivo.
  *

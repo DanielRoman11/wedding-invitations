@@ -37,19 +37,27 @@ export class Rings {
     this.rings = []
     this.disposables = []
 
+    const storyPhotos = [
+      photoAt(images, 0),
+      [photoAt(images, 1), photoAt(images, 2)],
+      photoAt(images, 3),
+      photoAt(images, 4),
+      photoAt(images, 5),
+    ]
     const storyPanels = story.map((step, i) =>
-      ({ texture: storyPanel(photoAt(images, i), step, i, story.length), title: step.title, text: step.text }),
+      ({ texture: storyPanel(storyPhotos[i], step, i, story.length), title: step.title, text: step.text }),
     )
     // El versículo es la introducción del segundo anillo: un solo panel
     const versePanels = [
       {
-        texture: versePanel(photoAt(images, story.length), verse),
+        texture: versePanel(photoAt(images, 11), verse),
         title: verse.reference,
         text: verse.parts.join(" "),
       },
     ]
+    const schedulePhotoIndexes = [15, 16, 17, 14]
     const schedulePanels = schedule.map((row, i) => ({
-      texture: schedulePanel(photoAt(images, story.length + 1 + i), row, i, schedule.length),
+      texture: schedulePanel(photoAt(images, schedulePhotoIndexes[i]), row, i, schedule.length),
       title: `${row.time} ${row.title}`,
       text: row.note || "",
     }))
@@ -243,6 +251,8 @@ export class Rings {
   drag(index, dAngle) {
     const ring = this.rings[index]
     ring.target -= dAngle
+    const k = Math.round((ring.target - ring.alpha) / ring.step)
+    ring.target = ring.alpha + Math.max(0, Math.min(ring.panels.length - 1, k)) * ring.step
     ring.angle = ring.target
   }
 
@@ -250,14 +260,16 @@ export class Rings {
   settle(index, velocity = 0) {
     const ring = this.rings[index]
     const k = Math.round((ring.target - velocity * 0.18 - ring.alpha) / ring.step)
-    ring.target = ring.alpha + k * ring.step
+    const bounded = Math.max(0, Math.min(ring.panels.length - 1, k))
+    ring.target = ring.alpha + bounded * ring.step
   }
 
   /** Avanza (+1) o retrocede (-1) un panel */
   stepPanel(index, dir) {
     const ring = this.rings[index]
     const k = Math.round((ring.target - ring.alpha) / ring.step) + dir
-    ring.target = ring.alpha + k * ring.step
+    const bounded = Math.max(0, Math.min(ring.panels.length - 1, k))
+    ring.target = ring.alpha + bounded * ring.step
   }
 
   update(delta, inside, still) {

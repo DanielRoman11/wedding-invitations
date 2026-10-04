@@ -166,6 +166,35 @@
     background-color 180ms var(--ease-out);
 }
 
+.ring-step span {
+  display: none;
+}
+
+.ring-step.is-return {
+  width: auto;
+  height: 40px;
+  padding: 0 0.35rem;
+  border-color: transparent;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0.5rem;
+  color: var(--accent-deep);
+  gap: 0.45rem;
+}
+
+.ring-step.is-return svg {
+  order: -1;
+  transform: rotate(180deg);
+}
+
+.ring-step.is-return span {
+  display: inline;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
 .ring-back:active,
 .ring-step:active {
   transform: scale(0.94);

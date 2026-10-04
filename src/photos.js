@@ -14,11 +14,16 @@ export async function loadPhotoImages() {
       img.src = url
     })
 
-  if (photos.length > 0) {
+  const urls = Object.values(photos).flat()
+  if (urls.length > 0) {
     const loaded = (
-      await Promise.all(photos.map((url) => load(`${import.meta.env.BASE_URL}${url}`)))
-    ).filter(Boolean)
-    if (loaded.length > 0) return loaded
+      await Promise.all(urls.map((url) => load(`${import.meta.env.BASE_URL}${url}`)))
+    )
+    if (loaded.some(Boolean)) {
+      return loaded.map(
+        (image, i) => image || createPhotoPlaceholderTexture(i, urls.length).image,
+      )
+    }
   }
   return Array.from(
     { length: placeholderPhotoCount },

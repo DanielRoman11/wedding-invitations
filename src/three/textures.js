@@ -370,7 +370,7 @@ export function createWishPaperTexture(closed) {
     ctx.fillStyle = css(palette.mocha)
     ctx.font = `64px "Pinyon Script", cursive`
     ctx.fillText("Manda un", w / 2 + 20, 250)
-    ctx.fillText("deseo al cielo", w / 2 + 20, 330)
+    ctx.fillText("mensaje en el arco", w / 2 + 20, 330)
     // Estrella
     ctx.fillStyle = css(palette.gold)
     ctx.beginPath()

@@ -1,7 +1,7 @@
 import * as THREE from "three"
 
-/** Disposición del mundo: tres objetos en fila a lo largo de -z, uno por sección */
-export const STAGES = 3 // 0 carta, 1 anillos, 2 ramo
+/** Disposición del mundo: cuatro objetos en fila a lo largo de -z */
+export const STAGES = 4 // 0 carta, 1 anillos, 2 ramo, 3 arco de deseos
 
 /** Pose de reposo de la tarjeta (la que sale del sobre) */
 export const CARD_REST = new THREE.Vector3(0, 0.2, 0.6)
@@ -18,9 +18,7 @@ export const RINGS_Z = -44
  */
 export const RINGS_Y = 2.8
 export const BOUQUET_Z = -88
-
-/** Cielo de faroles, detrás de la carta */
-export const LANTERN_CENTER = new THREE.Vector3(0, 1, -8)
+export const ARCH_Z = -124
 
 /** Cuánto sube (en unidades) cada hoja del reverso al irse con el scroll */
 export const SHEET_LIFT = 3.8

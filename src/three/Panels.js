@@ -90,11 +90,18 @@ function marker(ctx, label) {
 
 const pad = (n) => String(n).padStart(2, "0")
 
-/** Historia: foto arriba, fecha, título y texto debajo */
+/** Renders one or two photos above the story content. */
 export function storyPanel(img, step, index, total) {
   const { canvas, ctx } = makeCanvas(PANEL_W, PANEL_H)
   frame(ctx)
-  photoWindow(ctx, img, 70, 74, PANEL_W - 140, 520)
+  if (Array.isArray(img)) {
+    const gap = 18
+    const width = (PANEL_W - 140 - gap) / 2
+    photoWindow(ctx, img[0], 70, 74, width, 520)
+    photoWindow(ctx, img[1], 70 + width + gap, 74, width, 520)
+  } else {
+    photoWindow(ctx, img, 70, 74, PANEL_W - 140, 520)
+  }
 
   ctx.fillStyle = TEAL
   ctx.font = `28px "Mulish", sans-serif`

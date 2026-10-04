@@ -1,12 +1,11 @@
 import * as THREE from "three"
 import gsap from "gsap"
 import { Section } from "./Section.js"
-import { Lanterns } from "../Lanterns.js"
 import { palette } from "../../config.js"
 import { createWishPaperTexture, createCardBackTexture } from "../textures.js"
 import { polaroidTexture } from "../Panels.js"
 import { photoAt } from "../../photos.js"
-import { CARD_REST, CARD_W, CARD_H, LANTERN_CENTER, SHEET_LIFT } from "../world.js"
+import { CARD_REST, CARD_W, CARD_H, SHEET_LIFT } from "../world.js"
 
 const PAPER_W = 1.5
 const PAPER_H = 1.9
@@ -23,8 +22,8 @@ const POLAROID_H = 0.54
  * mismas) aparecen mientras se pasan las hojas. `photo` es el índice en `images`.
  */
 const FLOATERS = [
-  { group: "front", photo: 11 },
-  { group: "front", photo: 12 },
+  { group: "front", photo: 8 },
+  { group: "front", photo: 16 },
   { group: "back", photo: 13 },
   { group: "back", photo: 14 },
   { group: "back", photo: 15 },
@@ -44,7 +43,7 @@ const HOMES = {
 
 /**
  * Sección 0: la carta (frente y reverso), el papel de deseos que asoma detrás
- * y el cielo de faroles. Todo el estado animable vive en objetos simples que
+ * y el papel de deseos. Todo el estado animable vive en objetos simples que
  * gsap interpola; `update` los vuelca a las mallas cada frame.
  */
 export class CardSection extends Section {
@@ -87,10 +86,6 @@ export class CardSection extends Section {
     this.paperRest = { x: 1.45, y: -0.25, rz: -0.14 }
 
     this.#buildPaper()
-
-    this.lanterns = new Lanterns()
-    this.lanterns.group.position.copy(LANTERN_CENTER)
-    ctx.scene.add(this.lanterns.group)
 
     this.#buildFloaters()
   }
@@ -260,10 +255,12 @@ export class CardSection extends Section {
     )
   }
 
-  /** Ya no hay faroles de fondo: los deseos se envían y el papel se va volando */
+  /** Los deseos ahora terminan en el arco de la última escena. */
   setWishes() {}
 
-  launchWish() {}
+  launchWish(wish) {
+    this.emit("wish", wish)
+  }
 
   /* --------------------------------------------------------------- Giro */
 
@@ -455,9 +452,6 @@ export class CardSection extends Section {
     const list = []
     if (!this.prepared || this._paperTarget) return list
     if (this.paper.visible) list.push(this.paper)
-    if (this.lanterns.group.visible) {
-      list.push(...this.lanterns.items.filter((s) => !s.userData.busy))
-    }
     return list
   }
 
@@ -466,18 +460,12 @@ export class CardSection extends Section {
     if (!list.length) return null
     const hit = this.ctx.raycaster.intersectObjects(list, false)[0]
     if (!hit) return null
-    return hit.object === this.paper
-      ? { kind: "paper", object: hit.object }
-      : { kind: "lantern", object: hit.object }
+    return { kind: "paper", object: hit.object }
   }
 
   tap(hit) {
     if (!hit) return
     if (hit.kind === "paper") this.openPaper()
-    else if (hit.kind === "lantern") {
-      this.lanterns.pulse(hit.object)
-      this.emit("lantern", hit.object.userData.wish)
-    }
   }
 
   cursorFor(hit) {
@@ -566,7 +554,6 @@ export class CardSection extends Section {
     this.paper.visible = this.prepared && op > 0.005
 
     this.#updateFloaters(elapsed)
-    this.lanterns.update(elapsed, delta)
   }
 
   /** Las hojas de atrás: asoman como un fajo y, una a una, quedan arriba y se van */
@@ -662,7 +649,5 @@ export class CardSection extends Section {
     this.paperClosedTex.dispose()
     this.paperOpenTex.dispose()
     this.paperBackTex.dispose()
-    this.ctx.scene.remove(this.lanterns.group)
-    this.lanterns.dispose()
   }
 }

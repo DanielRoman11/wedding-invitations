@@ -1,6 +1,7 @@
 import "./style.css"
 import { getGuest } from "./guest.js"
 import { wedding } from "./config.js"
+import { fetchWishes } from "./api.js"
 import { Experience } from "./three/Experience.js"
 import { showHint, hideHint } from "./ui/overlay.js"
 
@@ -39,15 +40,20 @@ async function boot() {
   await experience.ready
 
   // 3. UI de cada sección (cada módulo inyecta su HTML en su #stage-N)
-  const [{ initCardUi }, { initRingsUi }, { initBouquetUi }] = await Promise.all([
+  const [{ initCardUi }, { initRingsUi }, { initBouquetUi }, { initArchUi }] = await Promise.all([
     import("./ui/card/cardUi.js"),
     import("./ui/rings/ringsUi.js"),
     import("./ui/bouquet/bouquetUi.js"),
+    import("./ui/arch/archUi.js"),
   ])
   const { card, rings, bouquet } = experience.sections
   initCardUi({ section: card, guest, experience })
   initRingsUi({ section: rings, experience })
   initBouquetUi({ section: bouquet, guest, experience })
+  initArchUi({ section: experience.sections.arch })
+
+  // El arco conserva también los deseos que llegaron antes de abrir esta visita.
+  fetchWishes().then((wishes) => experience.sections.arch.setWishes(wishes))
 
   // Botón siempre presente: sale de cualquier anillo y vuelve al inicio de la página
   document.getElementById("home-btn").addEventListener("click", () => {

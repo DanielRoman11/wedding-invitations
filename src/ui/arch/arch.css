@@ -1,0 +1,47 @@
+/* Última escena (arco de deseos): botón para salir del zoom de un mensaje.
+   Pensado para móvil, donde no hay tecla Escape. */
+.arch-back {
+  position: absolute;
+  left: 50%;
+  bottom: calc(1.5rem + env(safe-area-inset-bottom));
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: 999px;
+  border: 1px solid var(--gold-line-strong);
+  background: var(--surface);
+  color: var(--ink);
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 0.82rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  pointer-events: auto;
+  box-shadow: 0 8px 24px -12px oklch(0.28 0.04 55 / 0.45);
+  opacity: 0;
+  transform: translate(-50%, 12px);
+  transition:
+    opacity 320ms var(--ease-out),
+    transform 320ms var(--ease-out);
+}
+
+.arch-back.is-on {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .arch-back:hover {
+    background: oklch(0.6 0.08 65 / 0.16);
+  }
+}
+
+.arch-back:active {
+  transform: translate(-50%, 0) scale(0.97);
+}
+
+.arch-back:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}

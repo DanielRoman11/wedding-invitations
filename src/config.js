@@ -50,15 +50,11 @@ export const schedule = [
   { time: "8:30 p. m.", title: "Fiesta y baile", note: "" },
 ];
 
-/**
- * Nuestra historia: 5 paneles dentro del primer anillo, cada uno con una foto
- * (en el orden de `photos`) y este texto. EDITA ESTOS TEXTOS: son de muestra.
- */
 export const story = [
-  { date: "Cuándo", title: "Nos conocimos", text: "Cuenta aquí cómo y dónde se conocieron." },
-  { date: "Cuándo", title: "Nuestra primera cita", text: "Ese día en que supimos que algo especial empezaba." },
-  { date: "Cuándo", title: "Lo que nos une", text: "Aquello que hizo que cada día juntos fuera mejor que el anterior." },
-  { date: "Cuándo", title: "La propuesta", text: "El momento en que dijimos que sí para siempre." },
+  { date: "2016", title: "Nos conocimos", text: "Nos conocimos en el colegio interamericano en el año 2016 cuando estábamos cursando noveno" },
+  { date: "2017", title: "Nuestra primera cita", text: "Salimos al cine y a comer 😋" },
+  { date: "2017", title: "Lo que nos une", text: "Desde que comenzos a salir seriamente hemos servido a Dios" },
+  { date: "2026", title: "La propuesta", text: "El momento en que dijimos que sí para siempre." },
   { date: "15 nov 2026", title: "Nuestra boda", text: "Y ahora queremos celebrarlo contigo." },
 ];
 
@@ -79,7 +75,7 @@ export const verse = {
 /** Etiquetas de los dos anillos */
 export const ringLabels = {
   story: "Nuestra historia",
-  promise: "Promesa y gran día",
+  promise: "Itinerario de boda",
 };
 
 /**
@@ -109,10 +105,10 @@ export const calendar = {
   durationHours: 8,
 };
 
-/** Farol inicial de los novios, siempre presente en el cielo de deseos */
+/** Mensaje inicial de los novios, siempre presente en el arco de deseos */
 export const coupleWish = {
   name: "Daniel & Geraldine",
-  message: "Escribe tu deseo y mándalo al cielo junto al nuestro.",
+  message: "Deja tu deseo en nuestro arco junto al nuestro.",
 };
 
 /**
@@ -122,31 +118,30 @@ export const coupleWish = {
  */
 export const fallbackGuest = "Querido invitado";
 
-/**
- * Fotos. Acompañan a los paneles (no son una galería aparte): las 5 primeras
- * van en la historia, la 6.ª en el versículo, las 4 siguientes en el itinerario
- * y las demás cuelgan del ramo. Si hay menos, se reutilizan en orden.
- * Ya están optimizadas en public/photos/ (1600px, webp, ~170 KB cada una).
- * Para cambiar fotos: deja las nuevas ahí y edita esta lista.
- * Elige entre 6 y 16; con más el anillo se vuelve apretado.
- * Si una ruta no existe, esa foto se ignora sola (no rompe el anillo).
- */
-export const photos = [
-  "photos/foto-01.webp",
-  "photos/foto-02.webp",
-  "photos/foto-03.webp",
-  "photos/foto-04.webp",
-  "photos/foto-05.webp",
-  "photos/foto-06.webp",
-  "photos/foto-10.webp",
-  "photos/foto-11.webp",
-  "photos/foto-12.webp",
-  "photos/foto-13.webp",
-  "photos/foto-14.webp",
-  "photos/foto-15.webp",
-  "photos/foto-16.webp",
-  "photos/foto-17.webp",
-];
+export const photos = {
+  history: [
+    "photos/history-1.webp",
+    "photos/history-2.webp",
+    "photos/history-3.webp",
+    "photos/history-4.webp",
+    "photos/history-5.webp",
+    "photos/history-6.webp",
+  ],
+  general: [
+    "photos/foto-01.webp",
+    "photos/foto-02.webp",
+    "photos/foto-03.webp",
+    "photos/foto-04.webp",
+    "photos/foto-05.webp",
+    "photos/foto-06.webp",
+    "photos/foto-07.webp",
+    "photos/foto-08.webp",
+    "photos/foto-09.webp",
+    "photos/foto-10.webp",
+    "photos/foto-11.webp",
+    "photos/foto-12.webp",
+  ],
+};
 
 /** Cantidad de tarjetas de muestra si `photos` está vacío */
 export const placeholderPhotoCount = 8;

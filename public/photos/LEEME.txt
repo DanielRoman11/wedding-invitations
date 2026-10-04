@@ -1,7 +1,0 @@
-Fotos de la pareja, ya optimizadas para web (webp, 1600 px, ~170 KB cada una).
-
-  foto-01.webp ... foto-07.webp, foto-10.webp ... foto-17.webp
-
-Para cambiarlas: deja los archivos nuevos aquí y edita la lista `photos`
-de src/config.js. Entre 6 y 16 fotos se ve mejor. Si una ruta no existe,
-esa foto se ignora sola.

@@ -4,7 +4,6 @@ import { fillCardBack } from "../content.js"
 import { initWishForm } from "../forms.js"
 import { CARD_H, SHEET_LIFT } from "../../three/world.js"
 
-const HIDE_WISH_MS = 7000
 const TOAST_MS = 4200
 
 /**
@@ -22,7 +21,6 @@ export function initCardUi({ section, guest, experience }) {
   const wish = $("wish-panel")
   const cueNext = $("card-cue-next")
   const toast = $("card-toast")
-  const wishRead = $("wish-read")
 
   fillCardBack()
   const pager = initBackPages(back, section, experience)
@@ -114,25 +112,6 @@ export function initCardUi({ section, guest, experience }) {
     section.launchWish(sent)
     hide(wish)
     showToast()
-  })
-
-  let readTimer = 0
-  const closeRead = () => {
-    clearTimeout(readTimer)
-    wishRead.classList.remove("is-in")
-    setTimeout(() => {
-      if (!wishRead.classList.contains("is-in")) wishRead.hidden = true
-    }, 300)
-  }
-  wishRead.querySelector(".wish-read__close").addEventListener("click", closeRead)
-
-  section.on("lantern", (lantern) => {
-    wishRead.querySelector(".wish-read__text").textContent = lantern.message
-    wishRead.querySelector(".wish-read__who").textContent = lantern.name ? `de ${lantern.name}` : ""
-    wishRead.hidden = false
-    requestAnimationFrame(() => requestAnimationFrame(() => wishRead.classList.add("is-in")))
-    clearTimeout(readTimer)
-    readTimer = setTimeout(closeRead, HIDE_WISH_MS)
   })
 
   syncDock()

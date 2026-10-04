@@ -66,7 +66,7 @@
 <section
   id="wish-panel"
   class="card-overlay"
-  aria-label="Manda un deseo al cielo"
+  aria-label="Deja un mensaje en el arco"
   hidden
 >
   <button type="button" class="card-close" id="wish-close" aria-label="Cerrar">
@@ -84,7 +84,7 @@
     </svg>
   </button>
   <div class="wish__inner">
-    <h2 class="wish__title">Manda un deseo al cielo</h2>
+    <h2 class="wish__title">Deja un mensaje en el arco</h2>
     <form id="wish-form" class="wish__form" novalidate>
       <label class="wish__field" id="wish-name-field" hidden>
         <span>Tu nombre completo</span>
@@ -113,20 +113,12 @@
         type="submit"
         class="card-back__btn card-back__btn--solid wish__send"
       >
-        Enviar deseo
+        Dejar mensaje
       </button>
     </form>
   </div>
 </section>
 
 <p class="card-toast" id="card-toast" role="status" hidden>
-  ¡Gracias! Tu deseo va camino al cielo de los novios.
+  ¡Gracias! Tu mensaje ya está en el arco de los novios.
 </p>
-
-<aside class="wish-read" id="wish-read" hidden>
-  <p class="wish-read__text"></p>
-  <p class="wish-read__who"></p>
-  <button type="button" class="wish-read__close" aria-label="Cerrar">
-    &times;
-  </button>
-</aside>
