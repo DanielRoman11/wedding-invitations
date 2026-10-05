@@ -13,30 +13,30 @@ const CARD_H = 0.92
 
 function messageTexture(wish) {
   const canvas = document.createElement("canvas")
-  canvas.width = 640
-  canvas.height = 330
+  canvas.width = 1024
+  canvas.height = 528
   const ctx = canvas.getContext("2d")
   ctx.fillStyle = "#fff8ec"
-  ctx.fillRect(12, 12, 616, 306)
+  ctx.fillRect(20, 20, 984, 488)
   ctx.strokeStyle = "#c08a54"
-  ctx.lineWidth = 5
-  ctx.strokeRect(20, 20, 600, 290)
+  ctx.lineWidth = 8
+  ctx.strokeRect(32, 32, 960, 464)
   ctx.fillStyle = "#6b4a36"
-  ctx.font = "600 28px Mulish, sans-serif"
-  ctx.fillText(wish.name || "Un invitado", 48, 68)
-  ctx.font = "26px Mulish, sans-serif"
-  // Ajuste de líneas: reduce acumula palabras y abre una línea nueva al pasar de 540px
+  ctx.font = "700 44px Mulish, sans-serif"
+  ctx.fillText(wish.name || "Un invitado", 76, 108)
+  ctx.font = "40px Mulish, sans-serif"
+  // Ajuste de líneas: reduce acumula palabras y abre una línea nueva al pasar de 870px
   const lines = String(wish.message || "")
     .split(/\s+/)
     .reduce((acc, word) => {
       const last = acc.length ? acc[acc.length - 1] : ""
       const next = last ? `${last} ${word}` : word
-      if (last && ctx.measureText(next).width > 540) acc.push(word)
+      if (last && ctx.measureText(next).width > 870) acc.push(word)
       else if (last) acc[acc.length - 1] = next
       else acc.push(word)
       return acc
     }, [])
-  lines.slice(0, 4).forEach((line, i) => ctx.fillText(line, 48, 120 + i * 38))
+  lines.slice(0, 4).forEach((line, i) => ctx.fillText(line, 76, 200 + i * 62))
   const texture = new THREE.CanvasTexture(canvas)
   texture.colorSpace = THREE.SRGBColorSpace
   return texture
@@ -85,6 +85,8 @@ export class ArchSection extends Section {
       card.mesh.material.map?.dispose()
       card.mesh.material.dispose()
       card.mesh.geometry.dispose()
+      card.hitMesh.geometry.dispose()
+      card.hitMesh.material.dispose()
     })
     this.cards = []
     all.forEach((wish) => this.addWish(wish, false))
@@ -98,6 +100,12 @@ export class ArchSection extends Section {
       new THREE.PlaneGeometry(CARD_W, CARD_H),
       new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide, toneMapped: false }),
     )
+    // Zona de toque más grande que la tarjeta: en móvil es difícil atinar
+    const hitMesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(CARD_W * 1.3, CARD_H * 1.45),
+      new THREE.MeshBasicMaterial({ visible: false, side: THREE.DoubleSide }),
+    )
+    mesh.add(hitMesh)
     const i = this.cards.length
     const angle = i * 2.39996323
     const radius = 2.2 + (i % 3) * 0.9
@@ -112,6 +120,7 @@ export class ArchSection extends Section {
     this.group.add(mesh)
     this.cards.push({
       mesh,
+      hitMesh,
       wish,
       baseY: target.y,
       baseRot: mesh.rotation.z,
@@ -134,15 +143,23 @@ export class ArchSection extends Section {
 
   pick() {
     if (!this.active) return null
-    return this.ctx.raycaster.intersectObjects(this.cards.map((card) => card.mesh), false)[0] ?? null
+    return this.ctx.raycaster.intersectObjects(this.cards.map((card) => card.hitMesh), false)[0] ?? null
   }
 
   cursorFor(hit) {
     return hit ? "pointer" : "default"
   }
 
+  /** Distancia de zoom para que la tarjeta se lea bien en cualquier pantalla.
+   *  En móvil manda el ancho: la tarjeta debe ocupar casi todo el viewport. */
+  #zoomDistance() {
+    const cam = this.ctx.camera
+    const tan = Math.tan(THREE.MathUtils.degToRad(cam.fov / 2))
+    return Math.max(2.2, CARD_W / (2 * tan * cam.aspect * 0.88), CARD_H / (2 * tan * 0.7))
+  }
+
   tap(hit) {
-    const card = this.cards.find((item) => item.mesh === hit?.object)
+    const card = this.cards.find((item) => item.hitMesh === hit?.object)
     // Tocar fuera de una tarjeta (o la misma otra vez) sale del zoom
     if (!card || this.selected === card) {
       this.exitZoom()
@@ -152,7 +169,9 @@ export class ArchSection extends Section {
     this.returning = false
     this.emit("zoom", card)
     card.mesh.getWorldPosition(this.zoomTarget)
-    this.zoomPosition.copy(this.zoomTarget).add(new THREE.Vector3(0, 0, 3.5))
+    this.zoomPosition
+      .copy(this.zoomTarget)
+      .add(new THREE.Vector3(0, 0, this.#zoomDistance()))
     gsap.to(this.ctx.camera.position, {
       x: this.zoomPosition.x,
       y: this.zoomPosition.y,
@@ -198,9 +217,10 @@ export class ArchSection extends Section {
     if (!this.active) return
     this.group.rotation.y = Math.sin(elapsed * 0.18) * 0.035
     const still = this.ctx.reducedMotion
-    // Cada mensaje se mece a su ritmo, como colgado de un hilo
+    // Cada mensaje se mece a su ritmo, como colgado de un hilo.
+    // El que se está leyendo se queda quieto.
     this.cards.forEach((card) => {
-      if (still) {
+      if (still || card === this.selected) {
         card.mesh.position.y = card.baseY
         card.mesh.rotation.z = card.baseRot
         return
@@ -216,6 +236,8 @@ export class ArchSection extends Section {
       card.mesh.geometry.dispose()
       card.mesh.material.map?.dispose()
       card.mesh.material.dispose()
+      card.hitMesh.geometry.dispose()
+      card.hitMesh.material.dispose()
     })
   }
 }
