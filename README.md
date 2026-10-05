@@ -13,10 +13,10 @@ tres secciones, cada una un objeto 3D en un jardín de bodas en una tarde dorada
 ## Uso rápido
 
 ```bash
-npm install
-npm run dev        # desarrollo en http://localhost:5173
-npm run build      # genera dist/ listo para subir a cualquier hosting
-npm run preview    # sirve el build para probarlo
+pnpm install
+pnpm run dev        # desarrollo en http://localhost:5173
+pnpm run build      # genera dist/ listo para subir a cualquier hosting
+pnpm run preview    # sirve el build para probarlo
 ```
 
 ## Personalizar los enlaces por invitado
@@ -24,8 +24,8 @@ npm run preview    # sirve el build para probarlo
 Cada invitado recibe una URL con su nombre:
 
 ```
-https://tusitio.com/?name=Pepe%20Perez
-https://tusitio.com/?name=Maria+Jose
+https://wedding.daker.dev?name=Pepe%20Perez
+https://wedding.daker.dev?name=Maria+Jose
 ```
 
 - El nombre aparece **impreso en el sobre 3D**, en la tarjeta, en el mensaje
@@ -38,7 +38,7 @@ Tip: genera la lista de enlaces con cualquier hoja de cálculo. Si los nombres
 están en la columna A:
 
 ```
-="https://tusitio.com/?name=" & SUSTITUIR(A2; " "; "+")
+="https://wedding.daker.dev?name=" & SUSTITUIR(A2; " "; "+")
 ```
 
 ## Qué editar antes de publicar
@@ -69,31 +69,8 @@ La lista se edita en `src/config.js`:
 ```js
 export const photos = [
   "photos/foto-01.webp",
-  // ... las que tengas en public/photos/
+  // ... public/photos/*
 ]
-```
-
-Para cambiar o quitar fotos:
-
-1. Deja los archivos nuevos en `public/photos/` (webp o jpg, ideal vertical 2:3).
-2. Edita la lista `photos`. Con una por panel (unas 11 entre historia, versículo e itinerario) se ve mejor;
-   si hay menos, se repiten. Si la lista queda vacía, se muestran tarjetas de muestra.
-
-Si vuelves a subir fotos originales muy pesadas, optimízalas antes:
-
-```bash
-python3 - <<'PY'
-from PIL import Image, ImageOps
-import glob, os
-for f in sorted(glob.glob("origenales/*.jpg")):
-    im = ImageOps.exif_transpose(Image.open(f))
-    w, h = im.size
-    s = 1600 / max(w, h)
-    if s < 1:
-        im = im.resize((round(w*s), round(h*s)), Image.LANCZOS)
-    im.convert("RGB").save("public/photos/" + os.path.basename(f)[:-4] + ".webp",
-                           "WEBP", quality=82, method=5)
-PY
 ```
 
 El script respeta la orientación EXIF, que es lo que suele desalinear las fotos
