@@ -6,36 +6,13 @@
 <title>motion debug</title>
 <style>
   body { font: 16px/1.6 system-ui, sans-serif; margin: 24px; background: #111; color: #eee; }
-  b { color: #7f7; }
-  .bad { color: #f77; }
   pre { white-space: pre-wrap; word-break: break-all; background: #222; padding: 12px; border-radius: 8px; }
+  .bad { color: #f77; }
 </style>
+<script src="./motion-debug.js" defer></script>
 </head>
 <body>
 <h1>Motion debug</h1>
 <pre id="out">…</pre>
-<script>
-const out = document.getElementById("out")
-const lines = []
-const add = (k, v, bad) => lines.push(`${k}: ${bad ? "⚠️ " : ""}${v}`)
-
-add("prefers-reduced-motion: reduce", matchMedia("(prefers-reduced-motion: reduce)").matches, matchMedia("(prefers-reduced-motion: reduce)").matches)
-add("prefers-reduced-motion: no-preference", matchMedia("(prefers-reduced-motion: no-preference)").matches)
-add("userAgent", navigator.userAgent)
-add("hardwareConcurrency", navigator.hardwareConcurrency)
-add("deviceMemory", navigator.deviceMemory)
-
-// ¿Corre requestAnimationFrame?
-let rafCount = 0
-const t0 = performance.now()
-const loop = () => { rafCount++; requestAnimationFrame(loop) }
-requestAnimationFrame(loop)
-setTimeout(() => {
-  const fps = (rafCount / ((performance.now() - t0) / 1000)).toFixed(1)
-  add("RAF fps (3s)", fps, fps < 20)
-  out.innerHTML = lines.map((l) => l.replace(/(⚠️ .*)$/, '<span class="bad">$1</span>')).join("\n")
-}, 3000)
-out.textContent = lines.join("\n") + "\n\n(midiendo RAF 3s…)"
-</script>
 </body>
 </html>
