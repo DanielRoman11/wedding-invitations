@@ -272,9 +272,9 @@ export class Rings {
     ring.target = ring.alpha + bounded * ring.step
   }
 
-  update(delta, inside, still) {
+  update(delta, inside) {
     this.rings.forEach((ring, i) => {
-      if (inside === null && !still) {
+      if (inside === null) {
         // En reposo cada anillo gira despacio, en sentidos contrarios
         ring.target += delta * 0.1 * (i === 0 ? 1 : -1)
         ring.angle = ring.target

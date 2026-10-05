@@ -354,21 +354,21 @@ export class Bouquet {
     this.spin.dragging = false
   }
 
-  update(elapsed, delta, still) {
+  update(elapsed, delta) {
     const s = this.spin
     if (!s.dragging) {
       s.angle += s.velocity
       s.velocity *= Math.exp(-delta * 3)
-      if (!still) s.angle += delta * 0.25
+      s.angle += delta * 0.25
     }
     this.body.rotation.y = s.angle
-    this.body.rotation.z = still ? 0 : Math.sin(elapsed * 0.6) * 0.03
+    this.body.rotation.z = Math.sin(elapsed * 0.6) * 0.03
 
     // Las polaroids orbitan despacio y siempre dan la cara
     for (const p of this.polaroids) {
       const { phase, y } = p.userData
-      const a = phase + (still ? 0 : elapsed * 0.28)
-      p.position.set(Math.sin(a) * 2.9, y + (still ? 0 : Math.sin(elapsed * 0.8 + phase) * 0.12), Math.cos(a) * 2.9)
+      const a = phase + elapsed * 0.28
+      p.position.set(Math.sin(a) * 2.9, y + Math.sin(elapsed * 0.8 + phase) * 0.12, Math.cos(a) * 2.9)
       p.rotation.set(0, a, Math.sin(phase) * 0.1)
       const s2 = 0.72
       p.scale.setScalar(s2)

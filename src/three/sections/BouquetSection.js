@@ -95,7 +95,8 @@ export class BouquetSection extends Section {
 
   update(elapsed, delta) {
     if (!this.#near()) return
-    this.bouquet.update(elapsed, delta, this.ctx.reducedMotion)
+    // Giro, balanceo y órbita de las polaroids: ambiente suave, siempre activo
+    this.bouquet.update(elapsed, delta)
 
     for (let i = this.timers.length - 1; i >= 0; i--) {
       const t = this.timers[i]

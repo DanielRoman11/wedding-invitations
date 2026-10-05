@@ -164,7 +164,9 @@ export class Experience {
     this.floor.receiveShadow = true
     this.scene.add(this.floor)
 
-    this.garden = new Garden({ reducedMotion: this.reducedMotion })
+    // El vaivén del jardín es ambiente suave: siempre activo, también con
+    // movimiento reducido (lo que se reduce es paralaje, vuelos y fuegos)
+    this.garden = new Garden()
     this.scene.add(this.garden.group)
 
     this.motes = new LightMotes()
@@ -173,9 +175,9 @@ export class Experience {
     this.dust = new Dust()
     this.scene.add(this.dust.points)
 
-    // Sin pétalos cuando el usuario pide movimiento reducido
-    this.petals = this.reducedMotion ? null : new Petals(120)
-    if (this.petals) this.scene.add(this.petals.mesh)
+    // Pétalos ambientales: suaves y lentos, también con movimiento reducido
+    this.petals = new Petals(120)
+    this.scene.add(this.petals.mesh)
 
     this.sparkles = new SparkleBurst()
     this.scene.add(this.sparkles.points)
@@ -618,7 +620,7 @@ export class Experience {
     this.garden.update(elapsed, delta, this.camera.position)
     this.motes.points.position.copy(this.camera.position)
     this.motes.update(elapsed)
-    this.dust.update(this.reducedMotion ? 0 : elapsed, this.camera.position)
+    this.dust.update(elapsed, this.camera.position)
     this.petals?.update(elapsed, delta, this.camera, this.petalPointer)
     this.sparkles.update(delta)
     this.fireworks.update(delta)

@@ -104,8 +104,11 @@ experience })`. `main.js` las llama UNA vez tras `await experience.ready`.
 - El nombre del invitado se dibuja en texturas canvas: por eso `main.js`
   espera `document.fonts.ready` ANTES de crear la escena.
 - Animaciones UI: curvas `--ease-out: cubic-bezier(0.23,1,0.32,1)`; entradas
-  escalonadas 70ms; todo lo animable es transform/opacity; respeta
-  `prefers-reduced-motion` también en la escena 3D.
+  escalonadas 70ms; todo lo animable es transform/opacity.
+- `prefers-reduced-motion` en la escena 3D desactiva solo lo intenso (paralaje,
+  vuelos de cámara, fuegos, explosión de pétalos): el ambiente suave
+  (autorrotación de anillos y ramo, polaroids, jardín, pétalos, polen, vaivén
+  de los mensajes) suena SIEMPRE; sin él el sitio se ve congelado en móvil.
 - Sin envmap: materiales "metálicos" deben usar metalness bajo o se ven negros.
 - Las fotos usan `MeshBasicMaterial` con `toneMapped: false` (color real, sin luces).
 - El mundo es largo (hasta z ~ -88 y más): el jardín cubre z +12 a -130; polen y pétalos siguen a la cámara. Fondo claro: sin blending aditivo.

@@ -216,11 +216,10 @@ export class ArchSection extends Section {
   update(elapsed) {
     if (!this.active) return
     this.group.rotation.y = Math.sin(elapsed * 0.18) * 0.035
-    const still = this.ctx.reducedMotion
     // Cada mensaje se mece a su ritmo, como colgado de un hilo.
     // El que se está leyendo se queda quieto.
     this.cards.forEach((card) => {
-      if (still || card === this.selected) {
+      if (card === this.selected) {
         card.mesh.position.y = card.baseY
         card.mesh.rotation.z = card.baseRot
         return

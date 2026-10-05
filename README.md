@@ -128,5 +128,7 @@ overlay HTML son los tokens OKLCH de `:root` en `src/style.css`.
 - Vite + Three.js + GSAP, sin framework.
 - Texturas del sobre, la tarjeta y las fotos de muestra se dibujan en canvas
   en tiempo de ejecución: el nombre del invitado queda renderizado en 3D.
-- Respeta `prefers-reduced-motion` (sin pétalos ni autorrotación).
+- `prefers-reduced-motion`: desactiva paralaje, vuelos de cámara y fuegos
+  artificiales; el ambiente suave (anillos, ramo, polaroids, jardín, pétalos)
+  sigue animándose siempre.
 - Tipografías: Marcellus (títulos), Pinyon Script (caligrafía), Mulish (texto).

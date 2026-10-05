@@ -584,7 +584,6 @@ export class CardSection extends Section {
   /** Las fotos del frente se despiden al girar y las del reverso llegan volando */
   #updateFloaters(elapsed) {
     const p = this._flipP
-    const still = this.ctx.reducedMotion
     const front = 1 - THREE.MathUtils.smoothstep(p, 0.05, 0.45)
     const back = THREE.MathUtils.smoothstep(p, 0.55, 0.95)
     const free = this.cs.fade // con el papel abierto la carta se va y ellas también
@@ -600,15 +599,15 @@ export class CardSection extends Section {
 
       const k = THREE.MathUtils.smootherstep(w, 0, 1)
       const t = elapsed * f.speed + f.phase
-      const bobX = still ? 0 : Math.sin(t) * 0.07
-      const bobY = still ? 0 : Math.cos(t * 1.3) * 0.09
+      const bobX = Math.sin(t) * 0.07
+      const bobY = Math.cos(t * 1.3) * 0.09
       // Desde el centro de la carta (el sobre) hasta su lugar
       mesh.position.set(
         THREE.MathUtils.lerp(CARD_REST.x, CARD_REST.x + f.home.x, k) + bobX,
         THREE.MathUtils.lerp(CARD_REST.y, CARD_REST.y + f.home.y, k) + bobY,
         CARD_REST.z + f.home.z * k,
       )
-      mesh.rotation.set(0, 0, f.turn * k + (still ? 0 : Math.sin(t * 0.8) * 0.06) + (1 - k) * 1.2)
+      mesh.rotation.set(0, 0, f.turn * k + Math.sin(t * 0.8) * 0.06 + (1 - k) * 1.2)
       mesh.scale.setScalar(0.25 + 0.75 * k)
       mesh.material.opacity = Math.min(1, w * 1.4)
     }

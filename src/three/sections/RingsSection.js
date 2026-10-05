@@ -197,7 +197,8 @@ export class RingsSection extends Section {
   }
 
   update(elapsed, delta) {
-    this.rings.update(delta, this._inside, this.ctx.reducedMotion)
+    // La autorrotación en reposo es ambiente suave: suena siempre
+    this.rings.update(delta, this._inside)
     if (this._inside === null) {
       this.emit("labels", this.rings.labelAnchors(this.ctx.camera, window.innerWidth, window.innerHeight))
     }
