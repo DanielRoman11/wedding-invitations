@@ -15,6 +15,10 @@ export function initBouquetUi({ section, guest, experience }) {
   host.innerHTML = html
   const $ = (id) => host.querySelector(`#${id}`)
 
+  const prevBtn = $("bq-prev")
+  const nextBtn = $("bq-next")
+  const stepsEl = host.querySelector(".bq-steps")
+
   $("bq-dress").textContent = wedding.dressCode
   $("bq-names").textContent = `${wedding.groom} & ${wedding.bride}`
   $("bq-date").textContent = wedding.dateLabel
@@ -82,9 +86,18 @@ export function initBouquetUi({ section, guest, experience }) {
       clearTimeout(hintTimer)
       hintTimer = setTimeout(hideHint, 4600)
     }
+    if (active && !wasActive) {
+      stepsEl.hidden = false
+      requestAnimationFrame(() => stepsEl.classList.add("is-on"))
+      host.querySelector(".bq-panel__scroll").scrollTop = 0
+    }
     wasActive = active
   }
   setInterval(watch, 300)
+
+  /* ---------------------------- step toolbar ---------------------------- */
+  prevBtn.addEventListener("click", () => experience.goToSection(1))
+  nextBtn.addEventListener("click", () => experience.goToSection(3))
 
   /* ------------------------------- RSVP ------------------------------- */
   initRsvpForm(guest, () => {

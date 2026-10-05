@@ -58,6 +58,13 @@ export class Experience {
     this._pos = new THREE.Vector3()
     this._look = new THREE.Vector3()
 
+    // Pager state
+    this._page = 0
+    this._pageTarget = null
+    this._flying = false
+    this._scrollProxy = { y: 0 }
+    this._scrollTween = null
+
     this.#initRenderer()
     this.#initLights()
     this.#initObjects()
@@ -269,10 +276,33 @@ export class Experience {
   #snapToPage(page) {
     const n = (this._pageStages ?? []).length || 1
     const p = Math.max(0, Math.min(n - 1, page))
-    window.scrollTo({
-      top: p * window.innerHeight,
-      behavior: this.reducedMotion ? "auto" : "smooth",
+    if (this._flying && p === this._pageTarget) return
+    this._pageTarget = p
+    this._flying = true
+    this._scrollTween?.kill()
+    this._scrollProxy.y = window.scrollY
+    this._scrollTween = gsap.to(this._scrollProxy, {
+      y: p * window.innerHeight,
+      duration: this.reducedMotion ? 0.01 : 0.55,
+      ease: "power2.inOut",
+      onUpdate: () => window.scrollTo(0, Math.round(this._scrollProxy.y)),
+      onComplete: () => {
+        this._page = p
+        this._pageTarget = null
+        this._flying = false
+        this._scrollTween = null
+      },
     })
+  }
+
+  /** Página comprometida (durante un vuelo devuelve la página destino). */
+  snapCurrentPage() {
+    return this._pageTarget ?? this._page
+  }
+
+  /** True mientras un tween de scroll está en curso. */
+  getFlying() {
+    return this._flying
   }
 
   #initScrollSnap() {
@@ -280,10 +310,8 @@ export class Experience {
       getPhase: () => this.phase,
       getLocked: () => document.documentElement.classList.contains("is-modal"),
       getPageCount: () => (this._pageStages ?? []).length || 1,
-      getCurrentPage: () => {
-        const n = (this._pageStages ?? []).length || 1
-        return Math.max(0, Math.min(n - 1, Math.round(window.scrollY / window.innerHeight)))
-      },
+      getCurrentPage: () => this.snapCurrentPage(),
+      getFlying: () => this.getFlying(),
       goToPage: (page) => this.#snapToPage(page),
     })
     this.snap.bind()

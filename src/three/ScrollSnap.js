@@ -7,11 +7,12 @@
  * escritorio con scroll-snap.
  */
 export class ScrollSnap {
-  constructor({ getPhase, getLocked, getPageCount, getCurrentPage, goToPage }) {
+  constructor({ getPhase, getLocked, getPageCount, getCurrentPage, getFlying, goToPage }) {
     this.getPhase = getPhase
     this.getLocked = getLocked
     this.getPageCount = getPageCount
     this.getCurrentPage = getCurrentPage
+    this.getFlying = getFlying
     this.goToPage = goToPage
 
     this.swipeStartY = null
@@ -48,6 +49,7 @@ export class ScrollSnap {
     if (!t) return
     if (this.getPhase() !== "open") return
     if (this.getLocked()) return
+    if (this.getFlying()) return
     if (this.#isOverUi(e.target)) return
 
     this.swipeStartY = t.clientY

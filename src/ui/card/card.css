@@ -274,6 +274,12 @@
 #card-back {
   overflow: clip;
   overscroll-behavior: auto;
+  pointer-events: none;
+}
+
+#card-back .card-back__btn,
+#card-back .accounts__row .btn {
+  pointer-events: auto;
 }
 
 .cb-stage {
