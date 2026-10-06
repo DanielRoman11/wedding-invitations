@@ -13,15 +13,18 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: 86svh;
+  height: auto;
+  max-height: min(46svh, 22rem);
   padding: 0;
   border-radius: 22px 22px 0 0;
   outline-offset: -7px;
   opacity: 0;
   transform: translateY(24px);
+  overflow: hidden;
   transition:
     opacity 500ms var(--ease-out),
-    transform 500ms var(--ease-out);
+    transform 500ms var(--ease-out),
+    max-height 420ms var(--ease-out);
 }
 
 .stage.is-active .bq-panel {
@@ -30,29 +33,88 @@
   transition-delay: 150ms;
 }
 
-.bq-panel__scroll {
+.bq-panel.is-expanded {
+  max-height: 86svh;
+}
+
+/* Agarre para deslizar el panel arriba/abajo */
+.bq-panel__handle {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2.25rem;
+  z-index: 5;
+  display: grid;
+  place-content: start center;
+  padding-top: 0.55rem;
+  pointer-events: auto;
+  touch-action: none;
+  cursor: grab;
+}
+.bq-panel__handle::before {
+  content: "";
+  width: 2.5rem;
+  height: 4px;
+  border-radius: 999px;
+  background: var(--gold-line);
+}
+.bq-panel__handle:active { cursor: grabbing; }
+
+/* Vista previa colapsada: solo título, mensaje y botón de apertura */
+.bq-panel__teaser {
+  padding: var(--bq-pad);
+  padding-top: 2rem;
+  padding-bottom: 1.1rem;
+  text-align: center;
+  transition: opacity 280ms ease;
+}
+.bq-panel.is-expanded .bq-panel__teaser {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bq-open-btn {
+  margin-top: 0.9rem;
+  width: min(100%, 18rem);
+}
+
+/* Contenido expandido: scroll interno con el formulario */
+.bq-panel__body {
   height: 100%;
+  opacity: 0;
+  transition: opacity 300ms ease;
+  display: flex;
+  flex-direction: column;
+}
+.bq-panel.is-expanded .bq-panel__body {
+  opacity: 1;
+}
+.bq-panel__body[hidden] { display: none; }
+
+.bq-panel__body-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
   overflow-y: auto;
   overscroll-behavior: contain;
   -webkit-overflow-scrolling: touch;
   padding: var(--bq-pad);
   padding-bottom: 0;
   scroll-padding: var(--bq-pad);
-  /* Recorte duro en el filete (7px): el contenido nunca se muestra desde
-     el outline hacia afuera, ni siquiera con momentum scrolling en iOS. */
   clip-path: inset(7px round 15px 15px 0 0);
   scrollbar-width: thin;
 }
 
-/* Espaciador inferior dentro del scroll: conserva el mismo hueco que el
-   padding interno aunque el contenido sea más alto que el panel. */
-.bq-panel__scroll::after {
+/* Espaciador inferior dentro del scroll */
+.bq-panel__body-scroll::after {
   content: "";
   display: block;
   height: max(var(--bq-pad), env(safe-area-inset-bottom));
 }
 
-/* Toolbar de pasos (solo portrait móvil) */
+/* Toolbar de pasos */
 .bq-steps {
   display: flex;
   justify-content: space-between;
@@ -67,6 +129,7 @@
   opacity: 0;
   transform: translateY(-8px);
   transition: opacity 300ms var(--ease-out), transform 300ms var(--ease-out);
+  flex-shrink: 0;
 }
 .bq-steps[hidden] { display: none; }
 .bq-steps.is-on {
@@ -110,13 +173,21 @@
     max-height: 88svh;
     border-radius: 14px;
     transform: translateY(calc(-50% + 24px));
+    overflow: visible;
   }
-  .bq-panel__scroll {
+  .bq-panel__handle { display: none; }
+  .bq-panel__teaser { display: none; }
+  .bq-panel__body {
+    opacity: 1;
+    height: 100%;
+    max-height: 88svh;
+  }
+  .bq-panel__body-scroll {
     height: auto;
     max-height: 88svh;
     clip-path: inset(7px round 7px);
   }
-  .bq-panel__scroll::after {
+  .bq-panel__body-scroll::after {
     height: var(--bq-pad);
   }
   .stage.is-active .bq-panel {
@@ -158,55 +229,36 @@
   color: oklch(0.38 0.045 55);
 }
 
-/* Vestimenta */
-.bq-dress {
-  margin-top: 1.1rem;
-  padding: 0.9rem 0 0.2rem;
-  color: oklch(0.6 0.08 65);
-}
-
-.bq-orn {
-  display: block;
-  width: 7.5rem;
-  height: auto;
-  margin: 0 auto 0.5rem;
-}
-
-.bq-dress__label {
-  font-size: 0.75rem;
-  font-weight: 600;
-  letter-spacing: 0.18em;
-  text-transform: uppercase;
-  color: oklch(0.38 0.045 55);
-}
-
-.bq-dress__value {
-  margin-top: 0.15rem;
-  font-family: var(--font-display);
-  font-size: 1.3rem;
-  color: var(--paper-ink);
-}
-
 /* Firma */
 .bq-sign {
-  margin-top: 1.6rem;
-  padding-top: 1rem;
+  margin-top: 1.2rem;
+  padding-top: 0.9rem;
   border-top: 1px solid oklch(0.6 0.08 65 / 0.45);
 }
 
 .bq-sign__names {
   font-family: var(--font-script);
-  font-size: 1.9rem;
-  line-height: 1.1;
+  font-size: 1.45rem;
+  line-height: 1.15;
   color: var(--accent-deep);
 }
 
 .bq-sign__date {
   margin-top: 0.2rem;
-  font-size: 0.78rem;
-  letter-spacing: 0.14em;
+  font-size: 0.7rem;
+  letter-spacing: 0.12em;
   text-transform: uppercase;
   color: oklch(0.38 0.045 55);
+}
+
+/* Nota bajo un campo del formulario */
+.field__note {
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: var(--ink-mute);
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
 }
 
 /* Pista de arrastre: sobre la zona del ramo */

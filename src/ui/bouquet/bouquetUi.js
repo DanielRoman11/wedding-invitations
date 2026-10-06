@@ -18,41 +18,113 @@ export function initBouquetUi({ section, guest, experience }) {
   const prevBtn = $("bq-prev")
   const nextBtn = $("bq-next")
   const stepsEl = host.querySelector(".bq-steps")
+  const panel = host.querySelector(".bq-panel")
+  const body = $("bq-body")
+  const bodyScroll = host.querySelector(".bq-panel__body-scroll")
+  const openBtn = $("bq-open")
+  const handle = host.querySelector(".bq-panel__handle")
 
-  $("bq-dress").textContent = wedding.dressCode
-  $("bq-names").textContent = `${wedding.groom} & ${wedding.bride}`
+  $("bq-names").textContent = `${wedding.bride} & ${wedding.groom}`
   $("bq-date").textContent = wedding.dateLabel
   if (wedding.invitationMessage) {
     const msg = $("bq-message")
+    const msg2 = $("bq-message-2")
     msg.textContent = wedding.invitationMessage
     msg.hidden = false
+    if (msg2) {
+      msg2.textContent = wedding.invitationMessage
+      msg2.hidden = false
+    }
   }
 
   /* ------------------------- cuenta regresiva ------------------------- */
-  const lead = $("bq-count-lead")
-  const fine = $("bq-count-fine")
+  const leads = [$("bq-count-lead"), $("bq-count-lead-2")].filter(Boolean)
+  const fines = [$("bq-count-fine"), $("bq-count-fine-2")].filter(Boolean)
   const target = new Date(wedding.dateISO).getTime()
   const pad = (n) => String(n).padStart(2, "0")
 
   const tick = () => {
     const diff = target - Date.now()
     if (diff <= 0) {
-      lead.textContent = "¡Es hoy, es hoy!"
-      fine.textContent = ""
+      leads.forEach((el) => (el.textContent = "¡Es hoy, es hoy!"))
+      fines.forEach((el) => (el.textContent = ""))
       return
     }
     const s = Math.floor(diff / 1000)
     const days = Math.floor(s / 86400)
-    lead.textContent = days === 1 ? "Falta 1 día" : `Faltan ${days} días`
-    fine.textContent =
+    const lead = days === 1 ? "Falta 1 día" : `Faltan ${days} días`
+    const fine =
       `${plural(Math.floor((s % 86400) / 3600), "hora", "horas")} · ` +
       `${pad(Math.floor((s % 3600) / 60))} min · ${pad(s % 60)} s`
+    leads.forEach((el) => (el.textContent = lead))
+    fines.forEach((el) => (el.textContent = fine))
   }
   tick()
   // Solo corre mientras la sección del ramo es la activa
   setInterval(() => {
     if (experience.stage === 2) tick()
   }, 1000)
+
+  /* ----------------------- panel plegable móvil ----------------------- */
+  const isLandscape = () => window.innerWidth / window.innerHeight >= 0.85
+  let isExpanded = false
+
+  const syncSteps = () => {
+    const show = isExpanded || isLandscape()
+    stepsEl.hidden = !show
+    if (show) requestAnimationFrame(() => stepsEl.classList.add("is-on"))
+    else stepsEl.classList.remove("is-on")
+  }
+
+  const expandPanel = () => {
+    if (isExpanded) return
+    isExpanded = true
+    panel.classList.add("is-expanded")
+    body.hidden = false
+    openBtn.setAttribute("aria-expanded", "true")
+    syncSteps()
+    // Al expandir, el contenido empieza arriba
+    bodyScroll.scrollTop = 0
+  }
+
+  const collapsePanel = () => {
+    if (!isExpanded) return
+    isExpanded = false
+    panel.classList.remove("is-expanded")
+    openBtn.setAttribute("aria-expanded", "false")
+    syncSteps()
+    // Esperamos a que termine la transición para ocultar el body
+    const onEnd = (e) => {
+      if (e.target !== panel) return
+      if (!isExpanded) body.hidden = true
+      panel.removeEventListener("transitionend", onEnd)
+    }
+    panel.addEventListener("transitionend", onEnd)
+  }
+
+  openBtn.addEventListener("click", expandPanel)
+
+  // Deslizar la manija para expandir/contraer
+  let dragStartY = null
+  const onPointerDown = (e) => {
+    dragStartY = e.clientY
+    handle.setPointerCapture(e.pointerId)
+  }
+  const onPointerUp = (e) => {
+    if (dragStartY === null) return
+    const dy = dragStartY - e.clientY
+    const threshold = 40
+    if (dy > threshold && !isExpanded) expandPanel()
+    else if (dy < -threshold && isExpanded) collapsePanel()
+    dragStartY = null
+  }
+  handle.addEventListener("pointerdown", onPointerDown)
+  handle.addEventListener("pointerup", onPointerUp)
+
+  window.addEventListener("resize", () => {
+    if (isLandscape()) expandPanel()
+    syncSteps()
+  })
 
   /* ------------------------------ pista ------------------------------- */
   const hint = $("bq-hint")
@@ -87,9 +159,10 @@ export function initBouquetUi({ section, guest, experience }) {
       hintTimer = setTimeout(hideHint, 4600)
     }
     if (active && !wasActive) {
-      stepsEl.hidden = false
-      requestAnimationFrame(() => stepsEl.classList.add("is-on"))
-      host.querySelector(".bq-panel__scroll").scrollTop = 0
+      // Al entrar al ramo, el panel vuelve a su vista reducida en móvil
+      if (!isLandscape()) collapsePanel()
+      else expandPanel()
+      bodyScroll.scrollTop = 0
     }
     wasActive = active
   }
@@ -102,7 +175,8 @@ export function initBouquetUi({ section, guest, experience }) {
   /* ------------------------------- RSVP ------------------------------- */
   initRsvpForm(guest, () => {
     experience.celebrate()
-    // La confirmación ya se muestra dentro del panel; la llevamos a la vista
+    // La confirmación ya se muestra dentro del panel; lo expandimos en móvil
+    expandPanel()
     $("rsvp-done").scrollIntoView({ block: "nearest", behavior: "smooth" })
   })
 }

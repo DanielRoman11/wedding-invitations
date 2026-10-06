@@ -47,7 +47,7 @@ export class BouquetSection extends Section {
     this.mode = landscape ? "landscape" : "portrait"
 
     const tanH = Math.tan(THREE.MathUtils.degToRad(camera.fov / 2))
-    const frac = landscape ? 0.62 : 0.4
+    const frac = landscape ? 0.62 : 0.5
     let scale = 1
     let dist = BOUQUET_H / (frac * 2 * tanH)
 
