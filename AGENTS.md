@@ -23,25 +23,27 @@ personalidad, principios y anti-referencias del proyecto).
 
 ## Concepto
 
-El scroll solo cambia de SECCIÓN: tres páginas de 100svh con scroll-snap
-mandatory. Cada sección es un objeto 3D con su propia interacción y la cámara
-vuela de uno a otro (en -z). Las fotos son complemento dentro de paneles.
+El scroll solo cambia de SECCIÓN: cuatro secciones repartidas en cinco páginas
+de 100svh con scroll-snap mandatory (la carta ocupa dos: frente y reverso).
+Cada sección es un objeto 3D con su propia interacción y la cámara vuela de uno
+a otro (en -z). Las fotos son complemento dentro de paneles.
 
-| Sección   | z   | Objeto                                                        | Interacción                                                                |
-| --------- | --- | ------------------------------------------------------------- | -------------------------------------------------------------------------- |
-| 0 Carta   | 0   | Carta con frente y reverso, papel de deseos, cielo de faroles | Girar la carta, tocar el papel, leer faroles                               |
-| 1 Anillos | -44 | Dos anillos de bronce dorado entrelazados                     | Tocar uno, la cámara entra y se arrastra para girar el carrusel de paneles |
-| 2 Ramo    | -88 | Ramo de novia arrastrable                                     | Panel HTML con vestimenta, cuenta regresiva y RSVP                         |
+| Sección   | z    | Objeto                                                        | Interacción                                                                |
+| --------- | ---- | ------------------------------------------------------------- | -------------------------------------------------------------------------- |
+| 0 Carta   | 0    | Carta con frente y reverso, papel de deseos, cielo de faroles | Girar la carta, tocar el papel, leer faroles                               |
+| 1 Anillos | -44  | Dos anillos de bronce dorado entrelazados                     | Tocar uno, la cámara entra y se arrastra para girar el carrusel de paneles |
+| 2 Ramo    | -88  | Ramo de novia arrastrable                                     | Panel HTML con vestimenta, cuenta regresiva y RSVP                         |
+| 3 Arco    | -124 | Arco floral con mensajes de deseo                             | Tocar un mensaje para hacer zoom                                           |
 
 ## Estructura
 
 ```
-index.html                 # DOM: canvas, loader, pista, #journey (#sec-0..2), #stage-0..2
+index.html                 # DOM: canvas, loader, pista, #journey (#sec-0, #sec-0b, #sec-1..3), #stage-0..3
 src/config.js              # ÚNICO archivo que edita el dueño (datos boda, historia, versículo, itinerario, fotos, paleta)
 src/guest.js               # Parseo/limpieza/capitalización de ?name=
 src/api.js                 # RSVP y deseos (envío y lectura)
 src/photos.js              # loadPhotoImages(), photoAt(images, i)
-src/main.js                # Bootstrap: fuentes, Experience, init de las tres UI
+src/main.js                # Bootstrap: fuentes, Experience, init de las UI
 src/style.css              # Solo estilos globales (variables, loader, hint, botones, formularios, .panel, .stage)
 src/ui/overlay.js          # Pista inicial (showHint/hideHint)
 src/ui/forms.js            # initRsvpForm / initWishForm (las llaman las UI de sección)
@@ -49,12 +51,13 @@ src/ui/content.js          # Contenido de config.js para las UI
 src/ui/card/               # card.html, card.css, cardUi.js: UI de la sección 0
 src/ui/rings/              # rings.html, rings.css, ringsUi.js: UI de la sección 1
 src/ui/bouquet/            # bouquet.html, bouquet.css, bouquetUi.js: UI de la sección 2
+src/ui/arch/               # arch.html, arch.css, archUi.js: UI de la sección 3
 src/three/world.js         # Constantes: STAGES, CARD_REST, CARD_W/H, RINGS_Z, BOUQUET_Z, LANTERN_CENTER
 src/three/Garden.js        # Fondo: cielo, suelo, sendero, colinas, luz de sol (compone GardenProps)
 src/three/GardenProps.js   # Árboles, setos, arco floral, flores, guirnaldas, sillas, mariposas
 src/three/Experience.js    # Núcleo: renderer, escena, luces, fases, vuelos de cámara, sections
 src/three/ScrollSnap.js    # Scroll por páginas en táctil (un swipe = siguiente página)
-src/three/sections/        # Section.js (clase base), CardSection, RingsSection, BouquetSection
+src/three/sections/        # Section.js (clase base), CardSection, RingsSection, BouquetSection, ArchSection
 src/three/Envelope.js      # Sobre y tarjeta; open() deja la tarjeta en CARD_REST
 src/three/Rings.js         # Anillos y paneles giratorios
 src/three/Bouquet.js       # Ramo de novia
@@ -69,16 +72,18 @@ src/three/textures.js      # Texturas canvas (sobre, sello, tarjeta, papel, plac
 
 - Cada sección 3D extiende `Section` (`src/three/sections/Section.js`) y
   expone métodos y eventos (`on`/`emit`). `experience.sections` es
-  `{ card, rings, bouquet }` y existe tras `await experience.ready`.
+  `{ card, rings, bouquet, arch }` y existe tras `await experience.ready`.
   - `CardSection`: `flip() openPaper() closePaper() releasePaper() setWishes()
 launchWish() prepare()`; getters `isFlipped isPaperOpen overlayRect`;
     eventos `flip paper lantern layout`.
   - `RingsSection`: `enter(i) exit() step(dir)`; getter `insideIndex`; eventos
     `labels enter exit panel scrolllock`.
   - `BouquetSection`: `celebrate()`; evento `layout`.
+  - `ArchSection`: `setWishes(wishes) addWish(wish) exitZoom()`; evento `zoom`.
 - Cada UI exporta `initCardUi({ section, guest, experience })`,
-  `initRingsUi({ section, experience })` o `initBouquetUi({ section, guest,
-experience })`. `main.js` las llama UNA vez tras `await experience.ready`.
+  `initRingsUi({ section, experience })`, `initBouquetUi({ section, guest,
+experience })` o `initArchUi({ section })`. `main.js` las llama UNA vez tras
+  `await experience.ready`.
   Cada una importa su HTML con `?raw` y su CSS, e inyecta el HTML en su
   `#stage-N` antes de buscar nodos. Los estilos de una UI viven en su carpeta,
   no en `style.css`.
@@ -87,7 +92,7 @@ experience })`. `main.js` las llama UNA vez tras `await experience.ready`.
 ## Convenciones
 
 - Fases de la escena: `sealed` → `opening` → `open` (en `Experience`).
-- Scroll: tres anclas `#sec-0..2` (100svh, `scroll-snap-align: start`,
+- Scroll: cinco anclas `.sec` `#sec-0, #sec-0b, #sec-1..3` (100svh, `scroll-snap-align: start`,
   `scroll-snap-stop: always`) que son solo espaciadores. El núcleo fija
   `html[data-stage]` y la clase `is-active` en el `#stage-N` correspondiente.
   En táctil `ScrollSnap` desactiva la inercia del navegador sobre el canvas
@@ -108,7 +113,7 @@ experience })`. `main.js` las llama UNA vez tras `await experience.ready`.
 - `prefers-reduced-motion` en la escena 3D desactiva solo lo intenso (paralaje,
   vuelos de cámara, fuegos, explosión de pétalos): el ambiente suave
   (autorrotación de anillos y ramo, polaroids, jardín, pétalos, polen, vaivén
-  de los mensajes) suena SIEMPRE; sin él el sitio se ve congelado en móvil.
+  de los mensajes) se anima SIEMPRE; sin él el sitio se ve congelado en móvil.
 - Sin envmap: materiales "metálicos" deben usar metalness bajo o se ven negros.
 - Las fotos usan `MeshBasicMaterial` con `toneMapped: false` (color real, sin luces).
 - El mundo es largo (hasta z ~ -88 y más): el jardín cubre z +12 a -130; polen y pétalos siguen a la cámara. Fondo claro: sin blending aditivo.

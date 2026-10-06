@@ -95,7 +95,6 @@ export class BouquetSection extends Section {
 
   update(elapsed, delta) {
     if (!this.#near()) return
-    // Giro, balanceo y órbita de las polaroids: ambiente suave, siempre activo
     this.bouquet.update(elapsed, delta)
 
     for (let i = this.timers.length - 1; i >= 0; i--) {
@@ -122,9 +121,9 @@ export class BouquetSection extends Section {
     const { fx, camera } = this.ctx
     const point = hit?.point ?? this.group.getWorldPosition(this._v)
     fx.sparkles?.burst(point)
-    if (fx.petals && !this.ctx.reducedMotion) {
+    if (!this.ctx.reducedMotion) {
       const ndc = point.clone().project(camera)
-      fx.petals.gust(ndc.x, ndc.y, camera, 0.7)
+      fx.petals?.gust(ndc.x, ndc.y, camera, 0.7)
     }
   }
 
@@ -152,9 +151,9 @@ export class BouquetSection extends Section {
     const burst = (dx, dy, strength) => {
       const p = top.clone().add(new THREE.Vector3(dx, dy, 0))
       fx.sparkles?.burst(p)
-      if (fx.petals && !this.ctx.reducedMotion) {
+      if (!this.ctx.reducedMotion) {
         const ndc = p.clone().project(camera)
-        fx.petals.gust(ndc.x, ndc.y, camera, strength)
+        fx.petals?.gust(ndc.x, ndc.y, camera, strength)
       }
     }
     burst(0, 0, 1.6)

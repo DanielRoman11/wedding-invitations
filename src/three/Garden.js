@@ -77,8 +77,7 @@ function inFreeZone(x, z, margin = 0) {
 }
 
 export class Garden {
-  constructor({ reducedMotion = false } = {}) {
-    this.reducedMotion = reducedMotion;
+  constructor() {
     this.group = new THREE.Group();
     this.group.name = "Garden";
     this._disposables = [];
@@ -90,7 +89,7 @@ export class Garden {
     this._buildTufts();
     this._buildLights();
 
-    this.props = new GardenProps({ reducedMotion });
+    this.props = new GardenProps();
     this.group.add(this.props.group);
   }
 
@@ -495,7 +494,7 @@ export class Garden {
 
   update(elapsed, delta, cameraPosition) {
     if (cameraPosition) this.sky.position.copy(cameraPosition);
-    if (!this.reducedMotion) this._swayTime.value = elapsed;
+    this._swayTime.value = elapsed;
     this.props.update(elapsed, delta, cameraPosition);
   }
 

@@ -171,8 +171,6 @@ export class Experience {
     this.floor.receiveShadow = true
     this.scene.add(this.floor)
 
-    // El vaivén del jardín es ambiente suave: siempre activo, también con
-    // movimiento reducido (lo que se reduce es paralaje, vuelos y fuegos)
     this.garden = new Garden()
     this.scene.add(this.garden.group)
 
@@ -182,7 +180,6 @@ export class Experience {
     this.dust = new Dust()
     this.scene.add(this.dust.points)
 
-    // Pétalos ambientales: suaves y lentos, también con movimiento reducido
     this.petals = new Petals(120)
     this.scene.add(this.petals.mesh)
 
@@ -403,7 +400,7 @@ export class Experience {
       this.dragMoved = false
       if (this.phase === "sealed") {
         if (this.#hitsEnvelope()) this.#openSequence()
-        else this.petals?.gust(this.pointer.x, this.pointer.y, this.camera, 0.9)
+        else if (!this.reducedMotion) this.petals?.gust(this.pointer.x, this.pointer.y, this.camera, 0.9)
       } else if (this.phase === "open") {
         const section = this.#activeSection()
         if (section?.pointerDown()) {
@@ -509,7 +506,7 @@ export class Experience {
       return
     }
     // Toque en el vacío: ráfaga de pétalos
-    this.petals?.gust(this.pointer.x, this.pointer.y, this.camera, 1)
+    if (!this.reducedMotion) this.petals?.gust(this.pointer.x, this.pointer.y, this.camera, 1)
   }
 
   /* ------------------- API para la interfaz ------------------ */
@@ -532,7 +529,7 @@ export class Experience {
     if (this.phase !== "sealed") return
     this.phase = "opening"
     this.callbacks.onOpenStart?.()
-    this.petals?.gust(0, 0, this.camera, 1.4)
+    if (!this.reducedMotion) this.petals?.gust(0, 0, this.camera, 1.4)
 
     await this.ready
 

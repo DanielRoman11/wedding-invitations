@@ -10,7 +10,6 @@ add("hardwareConcurrency", navigator.hardwareConcurrency)
 add("deviceMemory", navigator.deviceMemory)
 add("touch points", navigator.maxTouchPoints)
 
-// ¿Corre requestAnimationFrame?
 let rafCount = 0
 const t0 = performance.now()
 const loop = () => {

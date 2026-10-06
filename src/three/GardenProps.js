@@ -89,8 +89,7 @@ function blocked(x, z, r) {
 }
 
 export class GardenProps {
-  constructor({ reducedMotion = false } = {}) {
-    this.reducedMotion = reducedMotion;
+  constructor() {
     this.group = new THREE.Group();
     this.group.name = "GardenProps";
     this._dummy = new THREE.Object3D();
@@ -801,7 +800,6 @@ export class GardenProps {
   // ---------- Ciclo de vida ----------
 
   update(elapsed) {
-    if (this.reducedMotion) return;
     this._poseFliers(elapsed);
     // Titilar suave de los focos de las guirnaldas, en contrafase
     this.bulbMaterials[0].emissiveIntensity = 0.85 + 0.2 * Math.sin(elapsed * 1.6);

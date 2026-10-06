@@ -58,6 +58,8 @@ nada de estética editorial-minimalista de revista.
 
 ## Accessibility & Inclusion
 
-- Soporte `prefers-reduced-motion` (apertura simplificada, sin flotación ni pétalos).
+- `prefers-reduced-motion`: desactiva paralaje, vuelos de cámara y fuegos
+  artificiales; el ambiente suave (anillos, ramo, polaroids, jardín, pétalos)
+  sigue animándose siempre.
 - Contraste de texto >= 4.5:1 en todo el overlay.
 - Interacción por toque y mouse; hit areas generosas en móvil.
