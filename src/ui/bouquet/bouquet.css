@@ -13,86 +13,27 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: auto;
-  max-height: min(46svh, 22rem);
+  height: 86svh;
   padding: 0;
   border-radius: 22px 22px 0 0;
   outline-offset: -7px;
   opacity: 0;
-  transform: translateY(24px);
-  overflow: hidden;
+  transform: translateY(100%);
   transition:
     opacity 500ms var(--ease-out),
-    transform 500ms var(--ease-out),
-    max-height 420ms var(--ease-out);
+    transform 500ms var(--ease-out);
 }
 
-.stage.is-active .bq-panel {
+.bq-panel.is-visible {
   opacity: 1;
   transform: none;
-  transition-delay: 150ms;
 }
 
-.bq-panel.is-expanded {
-  max-height: 86svh;
-}
-
-/* Agarre para deslizar el panel arriba/abajo */
-.bq-panel__handle {
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2.25rem;
-  z-index: 5;
-  display: grid;
-  place-content: start center;
-  padding-top: 0.55rem;
-  pointer-events: auto;
-  touch-action: none;
-  cursor: grab;
-}
-.bq-panel__handle::before {
-  content: "";
-  width: 2.5rem;
-  height: 4px;
-  border-radius: 999px;
-  background: var(--gold-line);
-}
-.bq-panel__handle:active { cursor: grabbing; }
-
-/* Vista previa colapsada: solo título, mensaje y botón de apertura */
-.bq-panel__teaser {
-  padding: var(--bq-pad);
-  padding-top: 2rem;
-  padding-bottom: 1.1rem;
-  text-align: center;
-  transition: opacity 280ms ease;
-}
-.bq-panel.is-expanded .bq-panel__teaser {
-  position: absolute;
-  inset: 0;
-  opacity: 0;
-  pointer-events: none;
-}
-
-.bq-open-btn {
-  margin-top: 0.9rem;
-  width: min(100%, 18rem);
-}
-
-/* Contenido expandido: scroll interno con el formulario */
 .bq-panel__body {
   height: 100%;
-  opacity: 0;
-  transition: opacity 300ms ease;
   display: flex;
   flex-direction: column;
 }
-.bq-panel.is-expanded .bq-panel__body {
-  opacity: 1;
-}
-.bq-panel__body[hidden] { display: none; }
 
 .bq-panel__body-scroll {
   flex: 1 1 auto;
@@ -173,14 +114,11 @@
     max-height: 88svh;
     border-radius: 14px;
     transform: translateY(calc(-50% + 24px));
-    overflow: visible;
   }
-  .bq-panel__handle { display: none; }
-  .bq-panel__teaser { display: none; }
-  .bq-panel__body {
+  .bq-panel.is-visible,
+  .stage.is-active .bq-panel {
     opacity: 1;
-    height: 100%;
-    max-height: 88svh;
+    transform: translateY(-50%);
   }
   .bq-panel__body-scroll {
     height: auto;
@@ -189,9 +127,6 @@
   }
   .bq-panel__body-scroll::after {
     height: var(--bq-pad);
-  }
-  .stage.is-active .bq-panel {
-    transform: translateY(-50%);
   }
 }
 
@@ -311,15 +246,14 @@
     transition-duration: 1ms;
     transition-delay: 0s !important;
   }
-  .bq-panel {
-    transform: none;
-  }
-  .stage.is-active .bq-panel {
+  .bq-panel,
+  .bq-panel.is-visible {
     transform: none;
   }
 }
 @media (prefers-reduced-motion: reduce) and (min-aspect-ratio: 85/100) {
   .bq-panel,
+  .bq-panel.is-visible,
   .stage.is-active .bq-panel {
     transform: translateY(-50%);
   }
