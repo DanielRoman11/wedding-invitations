@@ -76,8 +76,8 @@ export function initRsvpForm(guest, onDone) {
       : "Lamentamos que no puedas acompañarnos. Te llevamos en el corazón."
 
     const intro = attending
-      ? `¡Hola! Soy ${name} y confirmo mi asistencia a la boda de ${wedding.groom} & ${wedding.bride}`
-      : `¡Hola! Soy ${name} y lamentablemente no podré asistir a la boda de ${wedding.groom} & ${wedding.bride}`
+      ? `¡Hola! Soy ${name} y confirmo mi asistencia a la boda de ${wedding.bride} & ${wedding.groom}`
+      : `¡Hola! Soy ${name} y lamentablemente no podré asistir a la boda de ${wedding.bride} & ${wedding.groom}`
     $("rsvp-whatsapp").href = `https://wa.me/${wedding.whatsapp}?text=${encodeURIComponent(intro)}`
 
     form.hidden = true

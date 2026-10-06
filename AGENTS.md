@@ -120,3 +120,6 @@ experience })` o `initArchUi({ section })`. `main.js` las llama UNA vez tras
 - Tokens CSS: `--bg --bg-deep --surface --surface-solid --surface-border --ink --muted --primary --accent --accent-deep --paper --paper-ink --shadow-text` (halo claro). Líneas sobre papel: `--gold-line*` (caramelo). Botón primario mocha con `--on-accent`.
 - Base de Vite relativa (`./`) para desplegar en cualquier subcarpeta.
 - Sin `any` ni guiones dobles o largos en texto en lenguaje natural.
+- No agregar comentarios con contexto de la respuesta; solo comentar cuando
+  expliquen una función compleja.
+- No ejecutar `npm run build` como verificación.

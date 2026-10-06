@@ -293,16 +293,15 @@ export function createCardFrontTexture(guestName) {
   ctx.fillStyle = "rgba(107,74,54,0.9)"
   ctx.fillText("te invitan a celebrar su boda", w / 2, 402)
 
-  // Nombres de los novios
   ctx.font = `64px "Marcellus", serif`
   ctx.fillStyle = css(palette.espresso)
-  ctx.fillText(wedding.groom, w / 2, 492)
+  ctx.fillText(wedding.bride, w / 2, 492)
   ctx.font = `52px "Pinyon Script", cursive`
   ctx.fillStyle = css(palette.caramel)
   ctx.fillText("&", w / 2, 553)
   ctx.font = `64px "Marcellus", serif`
   ctx.fillStyle = css(palette.espresso)
-  ctx.fillText(wedding.bride, w / 2, 626)
+  ctx.fillText(wedding.groom, w / 2, 626)
 
   // Motivo: dos anillos entrelazados
   drawRings(ctx, w / 2, 735, 50, css(palette.gold))
@@ -509,7 +508,7 @@ export function createPhotoPlaceholderTexture(index, total) {
   ctx.font = `italic 30px "Pinyon Script", cursive`
   ctx.fillStyle = css(palette.espresso)
   ctx.fillText(
-    `${wedding.groom} & ${wedding.bride}`,
+    `${wedding.bride} & ${wedding.groom}`,
     w / 2,
     h - 92,
   )

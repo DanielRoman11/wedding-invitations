@@ -16,8 +16,8 @@ const guest = getGuest()
 
 // El nombre viaja hasta el título de la pestaña (y previews de chat)
 document.title = guest.isFallback
-  ? `${wedding.groom} & ${wedding.bride} · Nuestra boda`
-  : `Para ${guest.name} · ${wedding.groom} & ${wedding.bride}`
+  ? `${wedding.bride} & ${wedding.groom} · Nuestra boda`
+  : `Para ${guest.name} · ${wedding.bride} & ${wedding.groom}`
 
 let experience
 

@@ -1,44 +1,21 @@
-/**
- * CONFIGURACIÓN DE LA BODA
- * ------------------------------------------------------------------
- * Edita estos datos y la página entera se actualiza:
- * sobre 3D, invitación, cuenta regresiva, botones y anillo de fotos.
- */
-
 export const wedding = {
-  // Novios
   groom: "Daniel",
   bride: "Geraldine",
-  groomFullName: "Daniel Mora Roman",
+  groomFullName: "Daniel Mora",
   brideFullName: "Geraldine Rubiano",
-  monogram: "D & G", // Iniciales del sello de cera
-
-  // Fecha de la boda (formato ISO: AAAA-MM-DDTHH:MM:SS, hora local)
+  monogram: "G & D",
   dateISO: "2026-11-15T16:00:00",
   dateLabel: "15 de noviembre de 2026",
   timeLabel: "4:00 p. m.",
-
-  // Lugar (edita cuando tengas el sitio confirmado)
   venueName: "Valle Arriba Centro de Eventos",
   venueAddress: "Colombia",
-  // URL de Google Maps del lugar
   mapsUrl: "https://maps.app.goo.gl/mnXqUoL6u26jpjUk8",
-
-  // RSVP: número de WhatsApp (código de país + número, solo dígitos)
   whatsapp: "573506192178",
-
-  // Dress code
   dressCode: "Etiqueta rigurosa",
-
-  // Mensaje que acompaña al nombre del invitado
   invitationMessage:
     "Tenemos el honor de invitarte a celebrar el día en que unimos nuestras vidas. Tu presencia es el mejor regalo.",
 };
 
-/**
- * Itinerario del día. Sale en el segundo anillo, después del versículo.
- * EDITA ESTOS HORARIOS: son de muestra.
- */
 export const schedule = [
   {
     time: "4:00 p. m.",
@@ -53,69 +30,83 @@ export const schedule = [
 export const story = [
   { date: "2016", title: "Nos conocimos", text: "Nos conocimos en el colegio interamericano en el año 2016 cuando estábamos cursando noveno" },
   { date: "2017", title: "Nuestra primera cita", text: "Salimos al cine y a comer 😋" },
-  { date: "2017", title: "Lo que nos une", text: "Desde que comenzos a salir seriamente hemos servido a Dios" },
+  { date: "2017", title: "Lo que nos une", text: "Desde que comenzamos a salir seriamente hemos servido a Dios" },
   { date: "2026", title: "La propuesta", text: "El momento en que dijimos que sí para siempre." },
   { date: "15 nov 2026", title: "Nuestra boda", text: "Y ahora queremos celebrarlo contigo." },
 ];
 
-/**
- * Versículo del segundo anillo (anillo de compromiso), versión Nueva Biblia Viva.
- * Es UN solo panel de introducción; después el anillo continúa con el itinerario.
- */
 export const verse = {
   version: "NBV",
   reference: "Cantares 8:6-7",
-  // Los dos versículos van juntos en un solo panel
   parts: [
     "Grábame como un sello sobre tu corazón. Llévame como un tatuaje en tu brazo, porque fuerte como la muerte es el amor, y tenaz como llama divina es el fuego ardiente del amor.",
     "¡Nada puede apagar las llamas del amor! ¡Nada, ni las inundaciones ni las aguas abundantes del mar podrán ahogarlo! Si alguien tratara de comprarlo con todo cuanto tiene sólo lograría que le despreciaran.",
   ],
 };
 
-/** Etiquetas de los dos anillos */
 export const ringLabels = {
   story: "Nuestra historia",
   promise: "Itinerario de boda",
 };
 
-/**
- * Detalles prácticos para los invitados (se muestran como lista).
- * Borra o agrega líneas libremente.
- */
 export const practicalNotes = [
-  "Habrá parqueadero en el lugar del evento.",
-  "Por favor confirma tu asistencia antes de la fecha límite.",
+  "Parqueadero disponible en el lugar.",
+  "Confirma tu asistencia antes de la fecha límite.",
+  "Sin blanco, marfil ni negro: sigue la paleta de la boda.",
+  "Calzado cómodo para jardín, sin estampados fuertes.",
 ];
 
 /**
- * Lluvia de sobres.
- * `accounts` se muestra con un botón "Copiar" por cada cuenta.
- * Ejemplo: { label: "Nequi", value: "3001234567", holder: "Nombre Apellido" }
+ * Colores permitidos para la vestimenta. Se muestran como una tarjeta flotante
+ * con muestras en la hoja "Para tener en cuenta". Edita nombres y tonos.
  */
+export const dressPalette = {
+  title: "Colores permitidos",
+  groups: [
+    {
+      label: "Ellas",
+      colors: [
+        { name: "Blush", hex: "#e8b9a8" },
+        { name: "Caramelo", hex: "#c08a54" },
+        { name: "Salvia", hex: "#9caf88" },
+        { name: "Vino", hex: "#7a3b2b" },
+      ],
+    },
+    {
+      label: "Ellos",
+      colors: [
+        { name: "Beige", hex: "#d8bd9a" },
+        { name: "Caramelo", hex: "#c08a54" },
+        { name: "Oliva", hex: "#5f7a4e" },
+        { name: "Gris", hex: "#a89f92" },
+      ],
+    },
+  ],
+};
+
 export const gifts = {
   title: "Lluvia de sobres",
   message:
     "Tu presencia es nuestro mejor regalo. Si deseas obsequiarnos algo más, nos hará muy felices una lluvia de sobres para empezar juntos nuestra nueva vida.",
-  accounts: [],
+  accounts: [
+    {
+      label: "BreB",
+      qr: "assets/qr-breb.webp",
+      text: "3506192178",
+    },
+  ],
 };
 
-/** Para agregar la boda al calendario del invitado */
 export const calendar = {
   utcOffset: "-05:00", // Colombia (sin horario de verano)
   durationHours: 8,
 };
 
-/** Mensaje inicial de los novios, siempre presente en el arco de deseos */
 export const coupleWish = {
-  name: "Daniel & Geraldine",
+  name: "Geraldine & Daniel",
   message: "Deja tu deseo en nuestro arco junto al nuestro.",
 };
 
-/**
- * Nombre usado cuando la URL NO trae ?name=
- * Ejemplo sin parámetro:  https://tusitio.com/
- * Ejemplo con parámetro:  https://tusitio.com/?name=Pepe%20Perez
- */
 export const fallbackGuest = "Querido invitado";
 
 export const photos = {
@@ -143,16 +134,14 @@ export const photos = {
   ],
 };
 
-/** Cantidad de tarjetas de muestra si `photos` está vacío */
 export const placeholderPhotoCount = 8;
 
 /**
- * Paleta "café con leche y turquesa" usada por la escena 3D (THREE entiende hex).
- * Día claro: el fondo es un turquesa pálido que se vuelve crema, el café espresso
- * hace de tinta y el dorado reluciente queda como acento ceremonial (anillos, filos).
+ * Paleta café usada por la escena 3D (THREE entiende hex).
+ * Tarde dorada: el fondo crema se vuelve salvia, el café espresso hace de tinta
+ * y el caramelo dorado queda como acento ceremonial (anillos, filos, listón).
  */
 export const palette = {
-  // Escena: tarde dorada en un jardín de bodas (cafés, crema, salvia)
   sky: 0xf6ead8, // Cielo crema cálido
   skyDeep: 0xefdcc0, // Niebla / horizonte: crema un punto más profundo
   haze: 0xfff3df, // Bruma cálida en los roces de luz

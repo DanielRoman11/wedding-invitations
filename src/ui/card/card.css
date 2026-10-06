@@ -224,17 +224,24 @@
   text-wrap: pretty;
 }
 
+/* Notas en dos columnas: se reparten solas y caen a una sola columna
+   cuando la carta es muy angosta (container query en .cb-stage) */
 .card-back__notes {
   list-style: none;
   text-align: left;
+  width: 100%;
+  columns: 2;
+  column-gap: calc(var(--cw) * 0.09);
 }
 
 .card-back__notes li {
   position: relative;
-  padding: 0.25em 0 0.25em 1.1em;
-  font-size: max(12px, calc(var(--cw) * 0.042));
-  line-height: 1.45;
-  color: var(--ink-soft);
+  padding: 0.22em 0 0.22em 1.05em;
+  font-size: max(10.5px, calc(var(--cw) * 0.036));
+  line-height: 1.4;
+  color: var(--ink);
+  text-wrap: pretty;
+  break-inside: avoid;
 }
 
 .card-back__notes li::before {
@@ -248,25 +255,152 @@
   background: var(--accent-deep);
 }
 
+/* Tarjeta flotante con la paleta de vestimenta (estilo polaroid) */
+.cb-palette {
+  width: max-content;
+  max-width: 100%;
+  margin-top: calc(var(--cw) * 0.03);
+  padding: calc(var(--cw) * 0.05) calc(var(--cw) * 0.055) calc(var(--cw) * 0.045);
+  text-align: left;
+  background: var(--paper-tint);
+  border: 1px solid var(--gold-line);
+  border-radius: calc(var(--cw) * 0.03);
+  box-shadow: 0 calc(var(--cw) * 0.018) calc(var(--cw) * 0.05) calc(var(--cw) * -0.02)
+    oklch(0.4 0.06 60 / 0.4);
+  transform: rotate(-1.5deg);
+  animation: cb-palette-float 6s var(--ease-in-out) infinite;
+}
+
+@keyframes cb-palette-float {
+  0%,
+  100% {
+    transform: rotate(-1.5deg) translateY(0);
+  }
+  50% {
+    transform: rotate(-1.5deg) translateY(-3px);
+  }
+}
+
+.cb-palette__title {
+  font-size: max(9.5px, calc(var(--cw) * 0.03));
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+}
+
+.cb-palette__group {
+  display: flex;
+  align-items: baseline;
+  gap: calc(var(--cw) * 0.035);
+  margin-top: calc(var(--cw) * 0.02);
+}
+
+.cb-palette__label {
+  flex: none;
+  width: 3.2em;
+  font-size: max(9.5px, calc(var(--cw) * 0.028));
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+}
+
+.cb-palette__swatches {
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: calc(var(--cw) * 0.024);
+}
+
+.cb-palette__swatch {
+  display: flex;
+}
+
+.cb-palette__dot {
+  flex: none;
+  width: calc(var(--cw) * 0.048);
+  height: calc(var(--cw) * 0.048);
+  min-width: 14px;
+  min-height: 14px;
+  border-radius: 50%;
+  background: var(--swatch);
+  border: 1px solid var(--gold-line-soft);
+  box-shadow: inset 0 0 0 1px oklch(1 0 0 / 0.3);
+}
+
 .card-back__accounts {
   list-style: none;
   margin-top: calc(var(--cw) * 0.025);
   display: grid;
-  gap: calc(var(--cw) * 0.02);
+  gap: calc(var(--cw) * 0.03);
   text-align: left;
 }
 
 .card-back__accounts .accounts__row {
-  padding: calc(var(--cw) * 0.025) calc(var(--cw) * 0.03);
-  font-size: max(11px, calc(var(--cw) * 0.034));
+  display: grid;
+  justify-items: center;
+  gap: calc(var(--cw) * 0.03);
+  padding: calc(var(--cw) * 0.035) calc(var(--cw) * 0.04);
   background: var(--paper-field);
-  border-radius: 8px;
+  border-radius: 12px;
 }
 
-.card-back__accounts .btn {
-  flex: none;
-  padding: 0.4rem 0.8rem;
-  font-size: max(11px, calc(var(--cw) * 0.033));
+.accounts__qr-link {
+  display: block;
+  line-height: 0;
+}
+
+.accounts__qr {
+  width: min(200px, calc(var(--cw) * 0.62));
+  height: auto;
+  aspect-ratio: 1;
+  object-fit: contain;
+  border-radius: 8px;
+  background: #fff;
+  cursor: zoom-in;
+}
+
+.accounts__info {
+  display: grid;
+  gap: 0.15rem;
+  justify-items: center;
+}
+
+.accounts__info strong {
+  font-size: max(10px, calc(var(--cw) * 0.032));
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-deep);
+}
+
+.accounts__copy {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.7rem;
+  font: inherit;
+  font-size: max(11.5px, calc(var(--cw) * 0.036));
+  font-weight: 600;
+  color: var(--ink);
+  background: var(--paper);
+  border: 1px dashed var(--gold-line-strong);
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    transform 180ms var(--ease-out),
+    background-color 180ms ease;
+}
+
+.accounts__copy:active {
+  transform: scale(0.97);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .accounts__copy:hover {
+    background: var(--gold-line-soft);
+  }
 }
 
 /* ------------- reverso: hojas que pasa el scroll de la página ------------- */
@@ -285,6 +419,25 @@
 .cb-stage {
   position: absolute;
   inset: 0;
+  container-type: inline-size;
+}
+
+@container (max-width: 300px) {
+  .card-back__notes {
+    columns: 1;
+  }
+
+  #notes-block {
+    gap: calc(var(--cw) * 0.03);
+  }
+
+  .cb-palette {
+    padding: calc(var(--cw) * 0.038) calc(var(--cw) * 0.045) calc(var(--cw) * 0.034);
+  }
+
+  .cb-palette__group {
+    margin-top: calc(var(--cw) * 0.014);
+  }
 }
 
 /* Opacidad, visibilidad y subida los fija cardUi según el scroll (la hoja sube con su texto) */
@@ -493,5 +646,8 @@
   .card-hint,
   .card-back__btn {
     transition: none;
+  }
+  .cb-palette {
+    animation: none;
   }
 }
