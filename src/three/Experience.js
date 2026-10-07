@@ -64,6 +64,7 @@ export class Experience {
     this._flying = false
     this._scrollProxy = { y: 0 }
     this._scrollTween = null
+    this._discreteCardFlip = false
 
     this.#initRenderer()
     this.#initLights()
@@ -274,6 +275,28 @@ export class Experience {
     const n = (this._pageStages ?? []).length || 1
     const p = Math.max(0, Math.min(n - 1, page))
     if (this._flying && p === this._pageTarget) return
+    
+    const currentPage = this.snapCurrentPage()
+    const isCardTransition = (currentPage === 0 && p === 1) || (currentPage === 1 && p === 0)
+    const isMobile = window.matchMedia("(pointer: coarse)").matches
+    
+    if (isMobile && isCardTransition) {
+      window.scrollTo(0, p * window.innerHeight)
+      this._page = p
+      this._pageTarget = null
+      this._flying = false
+      
+      const card = this.sections.card
+      const target = p === 1
+      this._discreteCardFlip = true
+      card.animateFlip(target)
+      
+      gsap.delayedCall(0.4, () => {
+        this._discreteCardFlip = false
+      })
+      return
+    }
+    
     this._pageTarget = p
     this._flying = true
     this._scrollTween?.kill()
@@ -591,10 +614,7 @@ export class Experience {
     card.castShadow = false
   }
 
-  /* ------------------------ loop ----------------------------- */
-
   #updateJourney(delta, elapsed) {
-    // El scroll real mueve la cámara con un poco de inercia
     const k = this.reducedMotion ? 1 : 1 - Math.exp(-delta * 6.5)
     this.smoothY += (window.scrollY - this.smoothY) * k
 
@@ -603,18 +623,16 @@ export class Experience {
     const page = Math.min(Math.max(stages.length - 1, 0), Math.max(0, Math.round(this.smoothY / vh)))
     this.#setStage(stages[page] ?? 0)
 
-    // El scroll voltea la carta (0 frente, 1 reverso en la 2.ª página) y después
-    // pasa las hojas del reverso: `sheetPos` 0 es la primera hoja, 1 la segunda...
     const card = this.sections.card
-    card.setFlipProgress(Math.min(1, Math.max(0, this.smoothY / vh)))
+    if (!this._discreteCardFlip) {
+      card.setFlipProgress(Math.min(1, Math.max(0, this.smoothY / vh)))
+    }
     card.setSheetPos(Math.max(0, this.smoothY / vh - 1))
 
     const section = this.#activeSection()
     if (section?.overrideCamera(this.camera)) {
-      // La sección controla la cámara; el paralaje se reinicia suavemente
       this.parallax.set(0, 0)
     } else if (this.journey.pose(this.smoothY, this._pos, this._look)) {
-      // Paralaje: la cámara se asoma hacia donde apunta el puntero
       const gain = this.reducedMotion ? 0 : (section?.parallaxGain ?? 1)
       this.parallax.lerp(this.pointer, 1 - Math.exp(-delta * 3))
       this.camera.position.set(

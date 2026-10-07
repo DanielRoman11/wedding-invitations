@@ -262,9 +262,6 @@ export class CardSection extends Section {
     this.emit("wish", wish)
   }
 
-  /* --------------------------------------------------------------- Giro */
-
-  /** El scroll voltea la carta: `p` va de 0 (frente) a 1 (reverso) */
   setFlipProgress(p) {
     this._flipP = p
     const flipped = p >= 0.97
@@ -277,7 +274,23 @@ export class CardSection extends Section {
     this.#syncGain()
   }
 
-  /** Con el reverso a la vista, el scroll pasa las hojas: 0 primera, 1 segunda... */
+  animateFlip(target) {
+    if (this._busy) return
+    this._busy = true
+    const targetP = target ? 1 : 0
+    this.#track(
+      gsap.to(this, {
+        _flipP: targetP,
+        duration: 0.35,
+        ease: "power2.inOut",
+        onUpdate: () => this.setFlipProgress(this._flipP),
+        onComplete: () => {
+          this._busy = false
+        },
+      }),
+    )
+  }
+
   setSheetPos(v) {
     if (Math.abs(v - this._sheetPos) < 0.0005) return
     this._sheetPos = v
