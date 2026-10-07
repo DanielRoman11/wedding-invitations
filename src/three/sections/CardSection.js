@@ -9,7 +9,6 @@ import { CARD_REST, CARD_W, CARD_H, SHEET_LIFT } from "../world.js"
 
 const PAPER_W = 1.5
 const PAPER_H = 1.9
-/** El papel queda así de atrás de la carta para no atravesarla al girar */
 const PAPER_DEPTH = 0.95
 const HINT_EVERY = 3.5
 const SHAKE_EVERY = 2
@@ -55,13 +54,13 @@ export class CardSection extends Section {
 
     this.active = true
     this.prepared = false
-    this._flipped = false // reverso ya de cara
-    this._flipP = 0 // progreso del giro por scroll: 0 frente, 1 reverso
-    this._sheetPos = 0 // hoja del reverso en pantalla (continuo)
-    this.sheets = [] // hojas 1..n-1 apiladas detrás de la carta (la hoja 0 es la carta misma)
+    this._flipped = false
+    this._flipP = 0
+    this._sheetPos = 0
+    this.sheets = []
     this._paperOpen = false
     this._paperTarget = false
-    this._busy = false // giro o apertura en curso
+    this._busy = false
     this._everFlipped = false
     this._idleT = 0
     this._shakeT = 0
@@ -69,11 +68,9 @@ export class CardSection extends Section {
     this._rect = { left: 0, top: 0, width: 0, height: 0 }
     this._tweens = []
 
-    // Estado animado de la carta
     this.cs = { wobble: 0, fade: 1, back: 0 }
-    // Estado animado del papel
     this.ps = {
-      open: 0, // 0 reposo, 1 al centro
+      open: 0,
       opacity: 0,
       shakeZ: 0,
       shakeY: 0,
@@ -81,12 +78,8 @@ export class CardSection extends Section {
       flyZ: 0,
       flyScale: 1,
     }
-    // Reposo del papel de deseos (respecto a la carta). Asoma lo bastante como
-    // para que se lea su leyenda: al costado en horizontal, por debajo en vertical.
     this.paperRest = { x: 1.45, y: -0.25, rz: -0.14 }
-
     this.#buildPaper()
-
     this.#buildFloaters()
   }
 
@@ -169,9 +162,6 @@ export class CardSection extends Section {
     this.paper.rotation.set(0, -0.08, -0.16)
     this.ctx.scene.add(this.paper)
   }
-
-  /* ---------------------------------------------------------------- API */
-
   get isFlipped() {
     return this._flipped
   }
@@ -209,7 +199,6 @@ export class CardSection extends Section {
     const dist = this.#distance()
     const tanH = Math.tan(THREE.MathUtils.degToRad(cam.fov) / 2)
 
-    // En pantallas angostas el papel no debe salirse de cuadro por la derecha
     const halfVisible = dist * tanH * cam.aspect * 0.94
     this.paperRest =
       cam.aspect < 0.85
@@ -244,7 +233,6 @@ export class CardSection extends Section {
     this._idleT = 0
     this._shakeT = 0
 
-    // Las fotos salen del sobre y vuelan hasta su sitio
     this.#track(
       gsap.to(this.floatIn, {
         t: 1,

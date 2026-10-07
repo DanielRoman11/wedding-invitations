@@ -51,19 +51,16 @@ export class BouquetSection extends Section {
     let scale = 1
     let dist = BOUQUET_H / (frac * 2 * tanH)
 
-    // En pantallas angostas el ancho (con las polaroids) manda
     const visW = 2 * dist * tanH * aspect
     const regionW = landscape ? visW * 0.42 : visW
     const maxW = regionW * 0.94
     if (BOUQUET_W > maxW) scale = maxW / BOUQUET_W
-    // Se achica y se acerca la cámara para que siga ocupando la fracción pedida del alto
     if (scale < 1) dist = (BOUQUET_H * scale) / (frac * 2 * tanH)
     dist = Math.max(dist, 6)
 
     const visH = 2 * dist * tanH
     const visWidth = visH * aspect
     const targetX = landscape ? -0.27 * visWidth : 0
-    // Centro de la región superior en vertical: 23% desde arriba
     const targetY = landscape ? LOOK_Y : LOOK_Y + 0.24 * visH
     this.group.scale.setScalar(scale)
     this._basePos.set(targetX, targetY - CENTER_Y * scale, BOUQUET_Z)
