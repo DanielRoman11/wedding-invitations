@@ -25,6 +25,36 @@ export function initCardUi({ section, guest, experience }) {
   fillCardBack()
   const pager = initBackPages(back, section, experience)
 
+  const prevBtn = $("card-prev")
+  const nextBtn = $("card-next")
+  const cardNav = $("card-nav")
+
+  const updateNavButtons = () => {
+    const currentPage = experience.snapCurrentPage()
+    const totalPages = experience.getPageCount()
+    prevBtn.disabled = currentPage === 0
+    nextBtn.disabled = currentPage === totalPages - 1
+  }
+
+  prevBtn.addEventListener("click", () => {
+    const currentPage = experience.snapCurrentPage()
+    if (currentPage > 0) {
+      experience.goToPage(currentPage - 1)
+    }
+  })
+
+  nextBtn.addEventListener("click", () => {
+    const currentPage = experience.snapCurrentPage()
+    const totalPages = experience.getPageCount()
+    if (currentPage < totalPages - 1) {
+      experience.goToPage(currentPage + 1)
+    }
+  })
+
+  section.on("flip", updateNavButtons)
+  section.on("sheetpos", updateNavButtons)
+  window.addEventListener("resize", updateNavButtons)
+
   /* ------------------------------ rect ------------------------------ */
   const place = (rect) => {
     if (!rect || !rect.width) return

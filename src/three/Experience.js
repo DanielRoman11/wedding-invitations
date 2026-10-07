@@ -271,6 +271,16 @@ export class Experience {
     this.#snapToPage(page)
   }
 
+  /** Navega a una página específica del recorrido */
+  goToPage(page) {
+    this.#snapToPage(page)
+  }
+
+  /** Retorna el número total de páginas */
+  getPageCount() {
+    return (this._pageStages ?? []).length || 1
+  }
+
   #snapToPage(page) {
     const n = (this._pageStages ?? []).length || 1
     const p = Math.max(0, Math.min(n - 1, page))
