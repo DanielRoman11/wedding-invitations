@@ -340,8 +340,8 @@
 .card-back__accounts .accounts__row {
   display: grid;
   justify-items: center;
-  gap: calc(var(--cw) * 0.03);
-  padding: calc(var(--cw) * 0.035) calc(var(--cw) * 0.04);
+  gap: calc(var(--cw) * 0.025);
+  padding: calc(var(--cw) * 0.028) calc(var(--cw) * 0.032);
   background: var(--paper-field);
   border-radius: 12px;
 }
@@ -352,7 +352,7 @@
 }
 
 .accounts__qr {
-  width: min(200px, calc(var(--cw) * 0.62));
+  width: min(140px, calc(var(--cw) * 0.42));
   height: auto;
   aspect-ratio: 1;
   object-fit: contain;
@@ -448,8 +448,8 @@
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: calc(var(--cw) * 0.04);
-  padding: calc(var(--cw) * 0.1);
+  gap: calc(var(--cw) * 0.025);
+  padding: calc(var(--cw) * 0.04);
   text-align: center;
   opacity: 0;
   visibility: hidden;
