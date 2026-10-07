@@ -287,7 +287,9 @@ export class Experience {
     if (this._flying && p === this._pageTarget) return
     
     const currentPage = this.snapCurrentPage()
-    const isCardTransition = (currentPage === 0 && p === 1) || (currentPage === 1 && p === 0)
+    const currentStage = this._pageStages[currentPage] ?? 0
+    const targetStage = this._pageStages[p] ?? 0
+    const isCardTransition = currentStage === 0 && targetStage === 0
     const isMobile = window.matchMedia("(pointer: coarse)").matches
     
     if (isMobile && isCardTransition) {
@@ -297,9 +299,12 @@ export class Experience {
       this._flying = false
       
       const card = this.sections.card
-      const target = p === 1
+      const targetFlip = p > 0
+      const targetSheet = Math.max(0, p - 1)
+      
       this._discreteCardFlip = true
-      card.animateFlip(target)
+      card.animateFlip(targetFlip)
+      card.setSheetPos(targetSheet)
       
       gsap.delayedCall(0.4, () => {
         this._discreteCardFlip = false

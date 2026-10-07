@@ -89,34 +89,44 @@
 
 .card-nav {
   display: none;
-  gap: 0.75rem;
-  pointer-events: auto;
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  transform: translateY(-50%);
+  justify-content: space-between;
+  padding: 0 1rem;
+  pointer-events: none;
+  z-index: 10;
 }
 
 .card-nav__btn {
-  width: 3rem;
-  height: 3rem;
+  width: 3.5rem;
+  height: 3.5rem;
   display: grid;
   place-items: center;
   background: var(--surface-solid);
-  border: 1px solid var(--surface-border);
+  border: 2px solid var(--surface-border);
   border-radius: 50%;
   color: var(--ink);
   cursor: pointer;
+  pointer-events: auto;
   transition:
     transform 180ms var(--ease-out),
     background-color 180ms ease,
-    opacity 180ms ease;
-  box-shadow: 0 6px 18px -8px oklch(0.4 0.06 60 / 0.35);
+    opacity 180ms ease,
+    border-color 180ms ease;
+  box-shadow: 0 8px 24px -8px oklch(0.4 0.06 60 / 0.4);
 }
 
 .card-nav__btn:disabled {
-  opacity: 0.3;
+  opacity: 0.25;
   cursor: not-allowed;
+  pointer-events: none;
 }
 
 .card-nav__btn:not(:disabled):active {
-  transform: scale(0.94);
+  transform: scale(0.92);
 }
 
 .card-nav__btn:focus-visible {
@@ -126,8 +136,9 @@
 
 @media (hover: hover) and (pointer: fine) {
   .card-nav__btn:not(:disabled):hover {
-    transform: translateY(-2px);
-    background: color-mix(in oklab, var(--surface-solid) 80%, oklch(0.8 0.07 70));
+    transform: scale(1.08);
+    background: color-mix(in oklab, var(--surface-solid) 85%, oklch(0.85 0.07 70));
+    border-color: var(--accent);
   }
 }
 
