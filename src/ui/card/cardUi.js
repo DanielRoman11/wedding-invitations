@@ -30,10 +30,17 @@ export function initCardUi({ section, guest, experience }) {
   const cardNav = $("card-nav")
 
   const updateNavButtons = () => {
+    const isCardStage = experience.stage === 0
+    if (!isCardStage) {
+      cardNav.classList.add("is-hidden")
+      return
+    }
+    
+    cardNav.classList.remove("is-hidden")
     const currentPage = experience.snapCurrentPage()
-    const totalPages = experience.getPageCount()
+    const cardPages = experience.getCardPageCount()
     prevBtn.disabled = currentPage === 0
-    nextBtn.disabled = currentPage === totalPages - 1
+    nextBtn.disabled = false
   }
 
   prevBtn.addEventListener("click", () => {
@@ -45,8 +52,11 @@ export function initCardUi({ section, guest, experience }) {
 
   nextBtn.addEventListener("click", () => {
     const currentPage = experience.snapCurrentPage()
-    const totalPages = experience.getPageCount()
-    if (currentPage < totalPages - 1) {
+    const cardPages = experience.getCardPageCount()
+    
+    if (currentPage === cardPages - 1) {
+      experience.goToSection(1)
+    } else if (currentPage < cardPages - 1) {
       experience.goToPage(currentPage + 1)
     }
   })
@@ -54,6 +64,7 @@ export function initCardUi({ section, guest, experience }) {
   section.on("flip", updateNavButtons)
   section.on("sheetpos", updateNavButtons)
   window.addEventListener("resize", updateNavButtons)
+  experience.onStageChange(updateNavButtons)
 
   /* ------------------------------ rect ------------------------------ */
   const place = (rect) => {

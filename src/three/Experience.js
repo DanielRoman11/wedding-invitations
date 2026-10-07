@@ -65,6 +65,7 @@ export class Experience {
     this._scrollProxy = { y: 0 }
     this._scrollTween = null
     this._discreteCardFlip = false
+    this._stageListeners = new Set()
 
     this.#initRenderer()
     this.#initLights()
@@ -281,6 +282,17 @@ export class Experience {
     return (this._pageStages ?? []).length || 1
   }
 
+  /** Retorna el número de páginas de la carta (stage 0) */
+  getCardPageCount() {
+    const stages = this._pageStages ?? []
+    let count = 0
+    for (const stage of stages) {
+      if (stage === 0) count++
+      else break
+    }
+    return count
+  }
+
   #snapToPage(page) {
     const n = (this._pageStages ?? []).length || 1
     const p = Math.max(0, Math.min(n - 1, page))
@@ -364,6 +376,12 @@ export class Experience {
       document.getElementById(`stage-${i}`)?.classList.toggle("is-active", i === next)
     }
     this.callbacks.onStage?.(next)
+    this._stageListeners.forEach((cb) => cb(next))
+  }
+
+  onStageChange(callback) {
+    this._stageListeners.add(callback)
+    return () => this._stageListeners.delete(callback)
   }
 
   /* ------------------------- eventos ------------------------- */
