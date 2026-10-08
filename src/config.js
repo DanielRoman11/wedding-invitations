@@ -52,8 +52,8 @@ export const ringLabels = {
 export const practicalNotes = [
   "Parqueadero disponible en el lugar.",
   "Confirma tu asistencia antes de la fecha límite.",
-  "Sin blanco, marfil ni negro: sigue la paleta de la boda.",
-  "Calzado cómodo para jardín, sin estampados fuertes.",
+  "Sin blanco, el color esta reservado para la novia",
+  "Sin beige, ni negro o colores similares, queremos que sea un momento alegre",
 ];
 
 /**

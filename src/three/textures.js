@@ -92,36 +92,45 @@ export function createEnvelopeFrontTexture(guestName) {
   ctx.lineTo(w, h)
   ctx.stroke()
 
-  // Filete caramelo interior
+  // Filete caramelo interior con mejor padding
   ctx.strokeStyle = gold
   ctx.globalAlpha = 0.6
   ctx.lineWidth = 2
-  ctx.strokeRect(28, 28, w - 56, h - 56)
+  const borderPadding = 36
+  ctx.strokeRect(borderPadding, borderPadding, w - borderPadding * 2, h - borderPadding * 2)
   ctx.globalAlpha = 1
 
   // La solapa tapa el ~65% superior del frente: el nombre va en el
   // tercio inferior, donde queda visible bajo la punta del sello.
   ctx.textAlign = "center"
 
-  // "Para"
+  // Calcular posiciones relativas al área interior del borde
+  const innerTop = borderPadding
+  const innerBottom = h - borderPadding
+  const innerHeight = innerBottom - innerTop
+
+  // "Para" - posicionado al 65% del área interior
   ctx.fillStyle = inkSoft
   ctx.font = `italic 40px Mulish, sans-serif`
-  ctx.fillText("Para", w / 2, h * 0.75)
+  const paraY = innerTop + innerHeight * 0.65
+  ctx.fillText("Para", w / 2, paraY)
 
-  // Nombre del invitado, caligráfico y protagonista
+  // Nombre del invitado, caligráfico y protagonista - al 75% del área interior
   const family = `"Pinyon Script", cursive`
   const px = fitFont(ctx, guestName, w * 0.72, 96, family)
   ctx.font = `${px}px ${family}`
   ctx.fillStyle = css(palette.espresso)
-  ctx.fillText(guestName, w / 2, h * 0.86)
+  const nameY = innerTop + innerHeight * 0.75
+  ctx.fillText(guestName, w / 2, nameY)
 
-  // Subrayado caligráfico
+  // Subrayado caligráfico - al 85% del área interior
   const nameWidth = Math.min(ctx.measureText(guestName).width * 0.8, w * 0.66)
   ctx.strokeStyle = "rgba(185,133,88,0.8)"
   ctx.lineWidth = 2.5
+  const underlineY = innerTop + innerHeight * 0.85
   ctx.beginPath()
-  ctx.moveTo(w / 2 - nameWidth / 2, h * 0.9)
-  ctx.quadraticCurveTo(w / 2, h * 0.93, w / 2 + nameWidth / 2, h * 0.9)
+  ctx.moveTo(w / 2 - nameWidth / 2, underlineY)
+  ctx.quadraticCurveTo(w / 2, underlineY + innerHeight * 0.03, w / 2 + nameWidth / 2, underlineY)
   ctx.stroke()
 
   return toTexture(canvas)
@@ -250,69 +259,78 @@ export function createCardFrontTexture(guestName) {
 
   const gold = css(palette.gold)
 
-  // Doble filete dorado
+  // Doble filete dorado con padding consistente
+  const outerPad = 32
+  const innerPad = 48
   ctx.strokeStyle = gold
   ctx.lineWidth = 3
-  ctx.strokeRect(30, 30, w - 60, h - 60)
+  ctx.strokeRect(outerPad, outerPad, w - outerPad * 2, h - outerPad * 2)
   ctx.lineWidth = 1
-  ctx.strokeRect(44, 44, w - 88, h - 88)
+  ctx.strokeRect(innerPad, innerPad, w - innerPad * 2, h - innerPad * 2)
 
   ctx.textAlign = "center"
+
+  // Posiciones relativas al área interior del doble borde
+  const innerTop = innerPad
+  const innerBottom = h - innerPad
+  const innerH = innerBottom - innerTop
+  const col = (frac) => innerTop + innerH * frac
 
   // Monograma superior
   ctx.font = `46px "Marcellus", serif`
   ctx.fillStyle = gold
-  ctx.fillText(wedding.monogram, w / 2, 122)
+  ctx.fillText(wedding.monogram, w / 2, col(0.08))
 
   // Título: deja claro que ESTA es la tarjeta de invitación
   const label = "INVITACIÓN DE BODA"
   ctx.font = `30px "Marcellus", serif`
   ctx.fillStyle = css(palette.mocha)
+  const titleY = col(0.155)
   if ("letterSpacing" in ctx) ctx.letterSpacing = "7px"
-  ctx.fillText(label, w / 2 + 3, 188)
+  ctx.fillText(label, w / 2 + 3, titleY)
   const half = ctx.measureText(label).width / 2
   if ("letterSpacing" in ctx) ctx.letterSpacing = "0px"
   ctx.strokeStyle = gold
   ctx.lineWidth = 1.5
   for (const side of [-1, 1]) {
     ctx.beginPath()
-    ctx.moveTo(w / 2 + side * (half + 22), 178)
-    ctx.lineTo(w / 2 + side * (half + 82), 178)
+    ctx.moveTo(w / 2 + side * (half + 22), titleY - 10)
+    ctx.lineTo(w / 2 + side * (half + 82), titleY - 10)
     ctx.stroke()
   }
 
   // "Para" + invitado
   ctx.font = "italic 30px Mulish, sans-serif"
   ctx.fillStyle = "rgba(107,74,54,0.9)"
-  ctx.fillText("Para", w / 2, 258)
+  ctx.fillText("Para", w / 2, col(0.25))
   ctx.font = `${fitFont(ctx, guestName, w * 0.7, 74, '"Pinyon Script", cursive')}px "Pinyon Script", cursive`
   ctx.fillStyle = css(palette.espresso)
-  ctx.fillText(guestName, w / 2, 332)
+  ctx.fillText(guestName, w / 2, col(0.32))
 
   ctx.font = "italic 30px Mulish, sans-serif"
   ctx.fillStyle = "rgba(107,74,54,0.9)"
-  ctx.fillText("te invitan a celebrar su boda", w / 2, 402)
+  ctx.fillText("te invitan a celebrar su boda", w / 2, col(0.39))
 
   ctx.font = `64px "Marcellus", serif`
   ctx.fillStyle = css(palette.espresso)
-  ctx.fillText(wedding.bride, w / 2, 492)
+  ctx.fillText(wedding.bride, w / 2, col(0.485))
   ctx.font = `52px "Pinyon Script", cursive`
   ctx.fillStyle = css(palette.caramel)
-  ctx.fillText("&", w / 2, 553)
+  ctx.fillText("&", w / 2, col(0.545))
   ctx.font = `64px "Marcellus", serif`
   ctx.fillStyle = css(palette.espresso)
-  ctx.fillText(wedding.groom, w / 2, 626)
+  ctx.fillText(wedding.groom, w / 2, col(0.61))
 
   // Motivo: dos anillos entrelazados
-  drawRings(ctx, w / 2, 735, 50, css(palette.gold))
+  drawRings(ctx, w / 2, col(0.72), 50, css(palette.gold))
 
   // Fecha
   ctx.font = `40px "Marcellus", serif`
   ctx.fillStyle = css(palette.espresso)
-  ctx.fillText(wedding.dateLabel, w / 2, 860)
+  ctx.fillText(wedding.dateLabel, w / 2, col(0.835))
   ctx.font = `30px "Marcellus", serif`
   ctx.fillStyle = "rgba(107,74,54,0.95)"
-  ctx.fillText(wedding.timeLabel, w / 2, 905)
+  ctx.fillText(wedding.timeLabel, w / 2, col(0.885))
 
   return toTexture(canvas)
 }

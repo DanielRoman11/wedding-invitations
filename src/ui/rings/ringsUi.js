@@ -16,7 +16,6 @@ export function initRingsUi({ section }) {
 
   const labels = [...stage.querySelectorAll(".ring-label")]
   const hud = stage.querySelector("#ring-hud")
-  const title = stage.querySelector(".ring-title")
   const dots = stage.querySelector(".ring-dots")
   const drag = stage.querySelector(".ring-drag")
   const live = stage.querySelector(".ring-live")
@@ -87,7 +86,6 @@ export function initRingsUi({ section }) {
     const isLast = index === count - 1
     next.classList.toggle("is-return", isLast)
     next.setAttribute("aria-label", isLast ? "Volver" : "Panel siguiente")
-    title.textContent = t || ""
     live.textContent = [t, text].filter(Boolean).join(". ")
     if (dots.children.length !== count) {
       dots.replaceChildren(

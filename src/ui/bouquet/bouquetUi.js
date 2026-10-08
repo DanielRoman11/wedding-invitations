@@ -98,41 +98,10 @@ export function initBouquetUi({ section, guest, experience }) {
 
   window.addEventListener("resize", updatePanelVisibility)
 
-  /* ------------------------------ pista ------------------------------- */
-  const hint = $("bq-hint")
-  let hintTimer = 0
-  let hintDone = false
-  const hideHint = () => {
-    if (hintDone) return
-    hintDone = true
-    clearTimeout(hintTimer)
-    hint.classList.remove("is-on")
-    hint.classList.add("is-off")
-    window.removeEventListener("pointermove", onDrag)
-  }
-  let down = false
-  const onDown = (e) => {
-    if (experience.stage !== 2 || e.target.closest(".bq-panel")) return
-    down = true
-  }
-  const onDrag = () => {
-    if (down) hideHint()
-  }
-  window.addEventListener("pointerdown", onDown)
-  window.addEventListener("pointermove", onDrag)
-  window.addEventListener("pointerup", () => (down = false))
-
   let wasActive = false
   const watch = () => {
     const active = experience.stage === 2
     if (active && !wasActive) {
-      // Al entrar al ramo, la pista aparece y el panel sigue la página
-      const page = experience.snapCurrentPage()
-      if (page < PANEL_PAGE && !hintDone) {
-        hint.classList.add("is-on")
-        clearTimeout(hintTimer)
-        hintTimer = setTimeout(hideHint, 4600)
-      }
       updatePanelVisibility()
       bodyScroll.scrollTop = 0
     }

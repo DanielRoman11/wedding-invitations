@@ -770,3 +770,78 @@ html.is-open .home-btn {
     transition: none;
   }
 }
+
+.scroll-hint {
+  position: fixed;
+  bottom: max(1.5rem, env(safe-area-inset-bottom));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 35;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    opacity 500ms var(--ease-out),
+    visibility 0s linear 500ms;
+  pointer-events: none;
+}
+
+html.is-open .scroll-hint {
+  opacity: 1;
+  visibility: visible;
+  transition-delay: 0s;
+}
+
+html.is-open .scroll-hint.is-hidden {
+  opacity: 0;
+  visibility: hidden;
+  transition-delay: 0s, 500ms;
+}
+
+.scroll-hint__text {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  text-shadow: var(--shadow-text);
+}
+
+.scroll-hint__arrow {
+  color: var(--accent);
+  animation: scroll-hint-bounce 2s var(--ease-in-out) infinite;
+  filter: drop-shadow(0 2px 4px oklch(0.3 0.05 60 / 0.4));
+}
+
+@keyframes scroll-hint-bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+@media (max-width: 768px) {
+  .scroll-hint__text {
+    font-size: 1rem;
+  }
+  
+  .scroll-hint__arrow {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .scroll-hint {
+    transition: none;
+  }
+  
+  .scroll-hint__arrow {
+    animation: none;
+  }
+}

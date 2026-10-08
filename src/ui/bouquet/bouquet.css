@@ -196,53 +196,8 @@
   text-transform: none;
 }
 
-/* Pista de arrastre: sobre la zona del ramo */
-.bq-hint {
-  position: absolute;
-  left: 50%;
-  top: max(4.5rem, env(safe-area-inset-top));
-  padding: 0.5rem 1rem;
-  border-radius: 999px;
-  font-size: 0.82rem;
-  letter-spacing: 0.06em;
-  color: var(--ink);
-  background: var(--surface-solid);
-  border: 1px solid var(--surface-border);
-  box-shadow: 0 6px 18px -8px oklch(0.4 0.06 60 / 0.4);
-  text-shadow: none;
-  white-space: nowrap;
-  opacity: 0;
-  transform: translate(-50%, 8px);
-  transition:
-    opacity 700ms var(--ease-out),
-    transform 700ms var(--ease-out);
-}
-
-.bq-hint::before { content: "Arrastra el ramo · desliza arriba para seguir"; }
-
-.bq-hint.is-on {
-  opacity: 1;
-  transform: translate(-50%, 0);
-  transition-delay: 600ms;
-}
-
-.bq-hint.is-off {
-  opacity: 0;
-  transition-delay: 0s;
-}
-
-@media (min-aspect-ratio: 85/100) {
-  .bq-hint {
-    top: auto;
-    bottom: 2rem;
-    /* Centrado en la zona libre a la izquierda del panel */
-    left: calc((100vw - min(30rem, 44vw) - clamp(1rem, 4vw, 3.5rem)) / 2);
-  }
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .bq-panel,
-  .bq-hint {
+  .bq-panel {
     transition-duration: 1ms;
     transition-delay: 0s !important;
   }

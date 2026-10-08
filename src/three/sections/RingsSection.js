@@ -35,6 +35,7 @@ export class RingsSection extends Section {
     this._vd = 4
     this._k = 0.001
     this._lastPanel = -1
+    this._lastViewedPanel = [0, 0]
     this._portrait = false
   }
 
@@ -71,7 +72,8 @@ export class RingsSection extends Section {
   pick() {
     if (this._inside !== null || this._flying) return null
     const i = this.rings.hitTest(this.ctx.raycaster)
-    return i >= 0 ? i : null
+    if (i >= 0) return i
+    return 0
   }
 
   tap(hit) {
@@ -95,7 +97,8 @@ export class RingsSection extends Section {
     // Ganancia 4x: un deslizamiento de dedo corto basta para pasar de panel
     this._k = (4 * 2 * tanH * aspect * this._vd) / (window.innerWidth * RING_RADIUS)
     this._plan = this.rings.planEnter(i, camera.position.clone(), this._vd)
-    this.rings.showPanel(i, 0)
+    const panelToShow = this._lastViewedPanel[i] || 0
+    this.rings.showPanel(i, panelToShow)
     this._startQuat.copy(camera.quaternion)
     this._inside = i
     this._lastPanel = -1
@@ -147,6 +150,7 @@ export class RingsSection extends Section {
     const k = this.rings.activeIndex(this._inside)
     if (!force && k === this._lastPanel) return
     this._lastPanel = k
+    this._lastViewedPanel[this._inside] = k
     const info = this.rings.panelInfo(this._inside, k)
     this.emit("panel", {
       ring: this._inside,

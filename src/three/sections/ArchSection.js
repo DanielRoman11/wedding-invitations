@@ -16,12 +16,12 @@ function messageTexture(wish) {
   canvas.width = 1024
   canvas.height = 528
   const ctx = canvas.getContext("2d")
-  ctx.fillStyle = "#fff8ec"
+  ctx.fillStyle = "#fef0c8"
   ctx.fillRect(20, 20, 984, 488)
-  ctx.strokeStyle = "#c08a54"
+  ctx.strokeStyle = "#d4a44a"
   ctx.lineWidth = 8
   ctx.strokeRect(32, 32, 960, 464)
-  ctx.fillStyle = "#6b4a36"
+  ctx.fillStyle = "#7a5a1e"
   ctx.font = "700 44px Mulish, sans-serif"
   ctx.fillText(wish.name || "Un invitado", 76, 108)
   ctx.font = "40px Mulish, sans-serif"

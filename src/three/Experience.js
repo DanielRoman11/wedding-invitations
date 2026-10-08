@@ -221,6 +221,13 @@ export class Experience {
         locks.rings = Boolean(v)
         applyLock()
       })
+      this.sections.rings.on("enter", () => {
+        const hint = document.getElementById("scroll-hint")
+        if (hint) hint.classList.add("is-hidden")
+      })
+      this.sections.rings.on("exit", () => {
+        this.#updateScrollHint(this._stage)
+      })
       this.sections.card.on("scrolllock", (v) => {
         locks.card = Boolean(v)
         applyLock()
@@ -375,8 +382,27 @@ export class Experience {
     for (let i = 0; i < STAGES; i++) {
       document.getElementById(`stage-${i}`)?.classList.toggle("is-active", i === next)
     }
+    this.#updateScrollHint(next)
     this.callbacks.onStage?.(next)
     this._stageListeners.forEach((cb) => cb(next))
+  }
+
+  #updateScrollHint(stage) {
+    const hint = document.getElementById("scroll-hint")
+    if (!hint) return
+    
+    const textEl = hint.querySelector(".scroll-hint__text")
+    if (!textEl) return
+    
+    if (stage === 3) {
+      hint.classList.add("is-hidden")
+      return
+    }
+    
+    hint.classList.remove("is-hidden")
+    
+    const texts = ["Continúa", "Continúa", "Continúa", ""]
+    textEl.textContent = texts[stage] || "Continúa"
   }
 
   onStageChange(callback) {
@@ -557,11 +583,10 @@ export class Experience {
     if (!section) return
     this.raycaster.setFromCamera(this.pointer, this.camera)
     const hit = section.pick()
-    if (hit) {
+    if (hit !== null) {
       section.tap(hit)
       return
     }
-    // Toque en el vacío: ráfaga de pétalos
     if (!this.reducedMotion) this.petals?.gust(this.pointer.x, this.pointer.y, this.camera, 1)
   }
 
@@ -629,6 +654,7 @@ export class Experience {
     this.refreshJourney()
     this.canvas.style.cursor = "default"
     this.#setStage(0, true)
+    this.#updateScrollHint(0)
     this.sections.card.prepare()
     this.callbacks.onOpened?.()
   }

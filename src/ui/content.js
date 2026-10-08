@@ -1,4 +1,4 @@
-import { wedding, practicalNotes, dressPalette, gifts, calendar } from "../config.js"
+import { wedding, practicalNotes, gifts, calendar } from "../config.js"
 
 const $ = (id) => document.getElementById(id)
 
@@ -111,26 +111,6 @@ export function fillCardBack() {
   const notes = $("notes-list")
   practicalNotes.forEach((text) => notes.append(el("li", "", text)))
   $("notes-block").hidden = practicalNotes.length === 0
-
-  // Paleta de vestimenta (tarjeta flotante)
-  $("palette-title").textContent = dressPalette.title
-  const paletteGroups = $("palette-groups")
-  dressPalette.groups.forEach((group) => {
-    const row = el("div", "cb-palette__group")
-    row.append(el("span", "cb-palette__label", group.label))
-    const swatches = el("ul", "cb-palette__swatches")
-    group.colors.forEach((color) => {
-      const swatch = el("li", "cb-palette__swatch")
-      swatch.style.setProperty("--swatch", color.hex)
-      swatch.title = color.name
-      swatch.setAttribute("aria-label", color.name)
-      swatch.append(el("i", "cb-palette__dot"))
-      swatches.append(swatch)
-    })
-    row.append(swatches)
-    paletteGroups.append(row)
-  })
-  $("dress-palette").hidden = dressPalette.groups.length === 0
 
   $("gifts-title").textContent = gifts.title
   $("gifts-message").textContent = gifts.message

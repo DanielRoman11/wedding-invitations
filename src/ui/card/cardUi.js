@@ -19,7 +19,6 @@ export function initCardUi({ section, guest, experience }) {
   const dock = stage.querySelector(".card-dock")
   const back = $("card-back")
   const wish = $("wish-panel")
-  const cueNext = $("card-cue-next")
   const toast = $("card-toast")
 
   fillCardBack()
@@ -99,11 +98,6 @@ export function initCardUi({ section, guest, experience }) {
   const syncDock = () => {
     dock.classList.toggle("is-paper", section.isPaperOpen)
     dock.classList.toggle("is-flipped", section.isFlipped)
-    cueNext.textContent = !section.isFlipped
-      ? "Para voltear la carta"
-      : pager.current() < pager.count - 1
-        ? "Siguiente hoja"
-        : "Los anillos"
   }
 
   section.on("flip", (flipped) => {
@@ -130,7 +124,6 @@ export function initCardUi({ section, guest, experience }) {
     syncDock()
   })
 
-  $("rsvp-btn").addEventListener("click", () => experience.goToSection(2))
   $("wish-close").addEventListener("click", () => section.closePaper())
 
   /* ------------------------------- deseos ------------------------------- */

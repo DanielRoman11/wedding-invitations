@@ -164,22 +164,6 @@
   opacity: 0;
 }
 
-.card-cue {
-  gap: 0.15rem;
-  font-size: 0.64rem;
-  pointer-events: none;
-}
-
-.card-cue small {
-  font-size: 0.7rem;
-  letter-spacing: 0.16em;
-  color: var(--accent);
-}
-
-.card-cue i {
-  height: 1.2rem;
-}
-
 /* ------------------- paneles superpuestos a la carta ------------------- */
 .card-overlay {
   position: absolute;
@@ -514,7 +498,7 @@
   align-items: center;
   justify-content: center;
   gap: calc(var(--cw) * 0.025);
-  padding: calc(var(--cw) * 0.04);
+  padding: calc(var(--cw) * 0.09) calc(var(--cw) * 0.09) calc(var(--cw) * 0.12);
   text-align: center;
   opacity: 0;
   visibility: hidden;
@@ -713,6 +697,9 @@
     transition: none;
   }
   .cb-palette {
+    animation: none;
+  }
+  .card-cue i {
     animation: none;
   }
 }
