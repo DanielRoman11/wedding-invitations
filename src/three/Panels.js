@@ -26,13 +26,13 @@ function frame(ctx) {
 }
 
 /** Dibuja `img` cubriendo el rectángulo; `focusY` 0 = arriba, 1 = abajo (caras suelen estar arriba) */
-function drawCover(ctx, img, x, y, w, h, focusY = 0.3) {
+function drawCover(ctx, img, x, y, w, h, focusY = 0.3, focusX = 0.5) {
   const iw = img.width || img.naturalWidth
   const ih = img.height || img.naturalHeight
   const scale = Math.max(w / iw, h / ih)
   const sw = w / scale
   const sh = h / scale
-  ctx.drawImage(img, (iw - sw) / 2, (ih - sh) * focusY, sw, sh, x, y, w, h)
+  ctx.drawImage(img, (iw - sw) * focusX, (ih - sh) * focusY, sw, sh, x, y, w, h)
 }
 
 function roundRect(ctx, x, y, w, h, r) {
@@ -45,11 +45,11 @@ function roundRect(ctx, x, y, w, h, r) {
   ctx.closePath()
 }
 
-function photoWindow(ctx, img, x, y, w, h) {
+function photoWindow(ctx, img, x, y, w, h, focusY = 0.3, focusX = 0.5) {
   ctx.save()
   roundRect(ctx, x, y, w, h, 16)
   ctx.clip()
-  drawCover(ctx, img, x, y, w, h)
+  drawCover(ctx, img, x, y, w, h, focusY, focusX)
   ctx.restore()
   ctx.strokeStyle = GOLD
   ctx.lineWidth = 3
@@ -94,13 +94,15 @@ const pad = (n) => String(n).padStart(2, "0")
 export function storyPanel(img, step, index, total) {
   const { canvas, ctx } = makeCanvas(PANEL_W, PANEL_H)
   frame(ctx)
+  const focusX = index === 1 ? 0.95 : 0.5
+  const focusY = index === 3 ? 0.75 : 0.3
   if (Array.isArray(img)) {
     const gap = 18
     const width = (PANEL_W - 140 - gap) / 2
-    photoWindow(ctx, img[0], 70, 74, width, 520)
-    photoWindow(ctx, img[1], 70 + width + gap, 74, width, 520)
+    photoWindow(ctx, img[0], 70, 74, width, 520, focusY, focusX)
+    photoWindow(ctx, img[1], 70 + width + gap, 74, width, 520, focusY, focusX)
   } else {
-    photoWindow(ctx, img, 70, 74, PANEL_W - 140, 520)
+    photoWindow(ctx, img, 70, 74, PANEL_W - 140, 520, focusY, focusX)
   }
 
   ctx.fillStyle = TEAL

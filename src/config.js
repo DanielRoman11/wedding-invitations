@@ -6,7 +6,7 @@ export const wedding = {
   monogram: "G & D",
   dateISO: "2026-11-15T16:00:00",
   dateLabel: "15 de noviembre de 2026",
-  timeLabel: "4:00 p. m.",
+  timeLabel: "4:30 p. m.",
   venueName: "Valle Arriba Centro de Eventos",
   venueAddress: "Colombia",
   mapsUrl: "https://maps.app.goo.gl/mnXqUoL6u26jpjUk8",
@@ -18,7 +18,7 @@ export const wedding = {
 
 export const schedule = [
   {
-    time: "4:00 p. m.",
+    time: "4:30 p. m.",
     title: "Ceremonia",
     note: "Por favor llega 20 minutos antes",
   },
@@ -28,9 +28,9 @@ export const schedule = [
 ];
 
 export const story = [
-  { date: "2016", title: "Nos conocimos", text: "Nos conocimos en el colegio interamericano en el año 2016 cuando estábamos cursando noveno" },
+  { date: "2016", title: "Nos conocimos", text: "Nos conocimos en el colegio interamericano en el año 2016 cuando estábamos en noveno" },
   { date: "2017", title: "Nuestra primera cita", text: "Salimos al cine y a comer 😋" },
-  { date: "2017", title: "Lo que nos une", text: "Desde que comenzamos a salir seriamente hemos servido a Dios" },
+  { date: "2017", title: "Lo que nos une", text: "Desde un principio Dios ha sido el centro de nuestra relación, por eso le servimos juntos" },
   { date: "2026", title: "La propuesta", text: "El momento en que dijimos que sí para siempre." },
   { date: "15 nov 2026", title: "Nuestra boda", text: "Y ahora queremos celebrarlo contigo." },
 ];
@@ -55,34 +55,6 @@ export const practicalNotes = [
   "Sin blanco, el color esta reservado para la novia",
   "Sin beige, ni negro o colores similares, queremos que sea un momento alegre",
 ];
-
-/**
- * Colores permitidos para la vestimenta. Se muestran como una tarjeta flotante
- * con muestras en la hoja "Para tener en cuenta". Edita nombres y tonos.
- */
-export const dressPalette = {
-  title: "Colores permitidos",
-  groups: [
-    {
-      label: "Ellas",
-      colors: [
-        { name: "Blush", hex: "#e8b9a8" },
-        { name: "Caramelo", hex: "#c08a54" },
-        { name: "Salvia", hex: "#9caf88" },
-        { name: "Vino", hex: "#7a3b2b" },
-      ],
-    },
-    {
-      label: "Ellos",
-      colors: [
-        { name: "Beige", hex: "#d8bd9a" },
-        { name: "Caramelo", hex: "#c08a54" },
-        { name: "Oliva", hex: "#5f7a4e" },
-        { name: "Gris", hex: "#a89f92" },
-      ],
-    },
-  ],
-};
 
 export const gifts = {
   title: "Lluvia de sobres",
@@ -142,16 +114,16 @@ export const placeholderPhotoCount = 8;
  * y el caramelo dorado queda como acento ceremonial (anillos, filos, listón).
  */
 export const palette = {
-  sky: 0xf6ead8, // Cielo crema cálido
-  skyDeep: 0xefdcc0, // Niebla / horizonte: crema un punto más profundo
-  haze: 0xfff3df, // Bruma cálida en los roces de luz
-  spotlight: 0xfff1d6, // Luz de sol cálida
-  rim: 0xc9956b, // Luz de relleno caramelo
-  paper: 0xfaf2e3, // Papel del sobre y tarjeta
-  paperInner: 0xf2e6cf, // Papel interior (bordes)
-  gold: 0xc08a54, // Caramelo bronceado (anillos, filos, listón)
-  seal: 0x7a3b2b, // Cera rojo café del sello
-  petal: 0xe9b8a4, // Pétalos rosa durazno
+  sky: 0xf6ead8,
+  skyDeep: 0xefdcc0,
+  haze: 0xfff3df,
+  spotlight: 0xfff1d6,
+  rim: 0xc9956b,
+  paper: 0xfaf2e3,
+  paperInner: 0xf2e6cf,
+  gold: 0xc08a54,
+  seal: 0x7a3b2b,
+  petal: 0xe9b8a4,
 
   // Gama café
   espresso: 0x3e2b20,

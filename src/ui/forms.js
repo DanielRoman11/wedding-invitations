@@ -60,7 +60,19 @@ export function initRsvpForm(guest, onDone) {
     conditional.forEach((node) => (node.hidden = value !== "si"))
   }
 
-  if (!guest.isFallback) form.elements.name.value = guest.name
+  const nameField = form.elements.name
+  const nameNote = $("rsvp-name-note")
+  const nameDisplay = $("rsvp-name-display")
+
+  if (!guest.isFallback) {
+    nameField.value = guest.name
+    nameField.readOnly = true
+    nameField.setAttribute("aria-readonly", "true")
+    nameField.hidden = true
+    nameDisplay.textContent = guest.name
+    nameDisplay.hidden = false
+    if (nameNote) nameNote.hidden = true
+  }
 
   form.addEventListener("change", (e) => {
     if (e.target.name === "attending") setAttending(e.target.value)

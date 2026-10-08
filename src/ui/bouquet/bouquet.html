@@ -19,7 +19,16 @@
 
           <form id="rsvp-form" class="form" novalidate>
             <fieldset class="choice">
-              <legend>¿Podrás asistir?</legend>
+            <label class="field field--center" id="rsvp-name-field">
+              <span>Esta invitacion es para</span>
+              <span id="rsvp-name-display" class="rsvp-name-display" hidden></span>
+              <input name="name" id="rsvp-name" required maxlength="80" autocomplete="name" style="font-weight: bold"/>
+              <small class="field__note" id="rsvp-name-note">
+                Si la invitación es para tu familia, los nombres de quienes asistirán estaran escritos en la invitacion.
+              </small>
+            </label>
+
+              <label>¿Podrás asistir?</label>
               <label class="choice__opt">
                 <input type="radio" name="attending" value="si" />
                 <span>¡Sí, allí estaré!</span>
@@ -30,13 +39,6 @@
               </label>
             </fieldset>
 
-            <label class="field">
-              <span>Tu nombre completo</span>
-              <input name="name" required maxlength="80" autocomplete="name" />
-              <small class="field__note">
-                Si la invitación es para tu familia, escribe los nombres de quienes asistirán.
-              </small>
-            </label>
 
             <label class="field" data-when="si" hidden>
               <span>Alergias o restricciones alimentarias</span>

@@ -580,6 +580,11 @@ html.is-open .scroll-cue {
   gap: 0.4rem;
 }
 
+.field--center {
+  text-align: center;
+  justify-items: center;
+}
+
 .field > span,
 .choice legend {
   font-size: 0.78rem;
@@ -610,6 +615,28 @@ html.is-open .scroll-cue {
 
 .field textarea::placeholder {
   color: oklch(0.5 0.035 55);
+}
+
+.field input[readonly],
+.field input[aria-readonly="true"] {
+  background: oklch(0.95 0.02 85 / 0.6);
+  color: var(--ink-soft);
+  cursor: not-allowed;
+  border-style: dashed;
+}
+
+.field .rsvp-name-display {
+  display: block;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: none;
+  text-align: center;
+  color: var(--ink);
+}
+
+.rsvp-name-display[hidden] {
+  display: none;
 }
 
 .field__count {

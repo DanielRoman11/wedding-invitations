@@ -112,22 +112,22 @@ export function createEnvelopeFrontTexture(guestName) {
   // "Para" - posicionado al 65% del área interior
   ctx.fillStyle = inkSoft
   ctx.font = `italic 40px Mulish, sans-serif`
-  const paraY = innerTop + innerHeight * 0.65
+  const paraY = innerTop + innerHeight * 0.77
   ctx.fillText("Para", w / 2, paraY)
 
-  // Nombre del invitado, caligráfico y protagonista - al 75% del área interior
+  // Nombre del invitado, caligráfico y protagonista - al 82% del área interior
   const family = `"Pinyon Script", cursive`
   const px = fitFont(ctx, guestName, w * 0.72, 96, family)
   ctx.font = `${px}px ${family}`
   ctx.fillStyle = css(palette.espresso)
-  const nameY = innerTop + innerHeight * 0.75
+  const nameY = innerTop + innerHeight * .90
   ctx.fillText(guestName, w / 2, nameY)
 
   // Subrayado caligráfico - al 85% del área interior
   const nameWidth = Math.min(ctx.measureText(guestName).width * 0.8, w * 0.66)
   ctx.strokeStyle = "rgba(185,133,88,0.8)"
   ctx.lineWidth = 2.5
-  const underlineY = innerTop + innerHeight * 0.85
+  const underlineY = innerTop + innerHeight * 0.92
   ctx.beginPath()
   ctx.moveTo(w / 2 - nameWidth / 2, underlineY)
   ctx.quadraticCurveTo(w / 2, underlineY + innerHeight * 0.03, w / 2 + nameWidth / 2, underlineY)

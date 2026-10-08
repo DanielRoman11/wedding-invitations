@@ -401,7 +401,7 @@ export class Experience {
     
     hint.classList.remove("is-hidden")
     
-    const texts = ["Continúa", "Continúa", "Continúa", ""]
+    const texts = ["Desliza abajo", "Desliza abajo", "Deliza abajo", ""]
     textEl.textContent = texts[stage] || "Continúa"
   }
 

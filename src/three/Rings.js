@@ -12,22 +12,19 @@ import {
 } from "./Panels.js"
 
 export const RING_RADIUS = 7
-const BAND_H = 3.8 // alto (largo del eje) de la banda
-const BAND_T = 0.18 // grosor del metal
+const BAND_H = 3.8
+const BAND_T = 0.18
 export const PANEL_WORLD_H = 2.7
 export const PANEL_WORLD_W = (PANEL_WORLD_H * PANEL_W) / PANEL_H
 const SEGMENTS = 96
 const TILT_A = -0.14
-const TILT_B = 0.7 // el segundo anillo se inclina ~40° sobre el eje que los une
+const TILT_B = 0.7
 
 /**
  * Dos anillos de bronce caramelo entrelazados (como alianzas). Cada uno es una banda
  * abierta con paneles (foto + texto) colgando de su cara interior, como un
  * carrusel: la cámara entra por la abertura, se pone en el centro y el
  * invitado gira el anillo arrastrando.
- *
- * Ejes: ambos anillos comparten la línea que une sus centros (el eje x del
- * conjunto), lo que garantiza que queden eslabonados.
  */
 export class Rings {
   constructor(images) {
@@ -47,7 +44,6 @@ export class Rings {
     const storyPanels = story.map((step, i) =>
       ({ texture: storyPanel(storyPhotos[i], step, i, story.length), title: step.title, text: step.text }),
     )
-    // El versículo es la introducción del segundo anillo: un solo panel
     const versePanels = [
       {
         texture: versePanel(photoAt(images, 11), verse),
@@ -81,8 +77,6 @@ export class Rings {
     const innerTex = innerBandTexture()
     this.disposables.push(outerTex, innerTex)
 
-    // Sin envmap el brillo viene de la autoiluminación: metalness baja y
-    // emissiveIntensity alta, con la textura como emissiveMap
     const outerMat = new THREE.MeshStandardMaterial({
       map: outerTex,
       metalness: 0.3,
@@ -126,20 +120,18 @@ export class Rings {
     rimBottom.position.y = -BAND_H / 2
     spin.add(outer, inner, rimTop, rimBottom)
 
-    // Paneles en la cara interior, repartidos a partes iguales
     const n = panels.length
     const step = (Math.PI * 2) / n
     const planeGeo = new THREE.PlaneGeometry(PANEL_WORLD_W, PANEL_WORLD_H)
     this.disposables.push(planeGeo)
     panels.forEach((panel, k) => {
-      // Los siguientes paneles quedan a la DERECHA: se llega a ellos arrastrando de derecha a izquierda
       const a = -k * step
       const mat = new THREE.MeshBasicMaterial({ map: panel.texture, toneMapped: false })
       this.disposables.push(mat, panel.texture)
       const mesh = new THREE.Mesh(planeGeo, mat)
       const r = RING_RADIUS - 0.1
       mesh.position.set(Math.sin(a) * r, 0, Math.cos(a) * r)
-      mesh.rotation.y = a + Math.PI // su frente mira al centro
+      mesh.rotation.y = a + Math.PI
       spin.add(mesh)
     })
 
@@ -151,7 +143,7 @@ export class Rings {
       step,
       angle: Math.random() * Math.PI * 2,
       target: 0,
-      alpha: 0, // dirección (en el marco del anillo) hacia la que mira la cámara
+      alpha: 0,
       hit: [outer, inner, rimTop, rimBottom],
     }
     ring.target = ring.angle
@@ -159,18 +151,15 @@ export class Rings {
     this.rings.push(ring)
   }
 
-  /** Pone el conjunto en vertical (cadena hacia la cámara) en pantallas altas */
   setPortrait(portrait) {
     this.assembly.rotation.y = portrait ? Math.PI / 2 : 0
   }
 
-  /** Índice del anillo bajo el rayo, o -1 */
   hitTest(raycaster) {
     const hit = raycaster.intersectObjects(this.hitMeshes, false)[0]
     return hit ? hit.object.userData.ringIndex : -1
   }
 
-  /** Punto de pantalla (px) sobre el borde alto de cada anillo, hacia la cámara */
   labelAnchors(camera, width, height) {
     const v = new THREE.Vector3()
     const center = new THREE.Vector3()
@@ -203,7 +192,6 @@ export class Rings {
     const center = ring.group.getWorldPosition(new THREE.Vector3())
     const axis = new THREE.Vector3(0, 1, 0).transformDirection(ring.group.matrixWorld)
 
-    // Hacia dónde mira la cámara por dentro: el lado desde el que se vino
     const p = fromPos.clone().sub(center)
     p.addScaledVector(axis, -p.dot(axis))
     if (p.lengthSq() < 1e-4) p.set(1, 0, 0).addScaledVector(axis, -axis.x)
