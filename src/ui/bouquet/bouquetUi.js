@@ -20,7 +20,7 @@ export function initBouquetUi({ section, guest, experience }) {
   const stepsEl = host.querySelector(".bq-steps")
   const panel = host.querySelector(".bq-panel")
   const bodyScroll = host.querySelector(".bq-panel__body-scroll")
-  const panelPage = [...document.querySelectorAll(".sec")].findIndex((page) => page.id === "sec-2b")
+  const panelPage = () => [...document.querySelectorAll(".sec")].findIndex((page) => page.id === "sec-2b")
 
   $("bq-names").textContent = `${wedding.bride} & ${wedding.groom}`
   $("bq-date").textContent = wedding.dateLabel
@@ -90,7 +90,7 @@ export function initBouquetUi({ section, guest, experience }) {
       return
     }
     const page = experience.snapCurrentPage()
-    if (page >= panelPage) showPanel()
+    if (page >= panelPage()) showPanel()
     else hidePanel()
   }
 

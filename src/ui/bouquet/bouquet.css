@@ -17,6 +17,7 @@
   padding: 0;
   border-radius: 22px 22px 0 0;
   outline-offset: -7px;
+  pointer-events: none;
   opacity: 0;
   transform: translateY(100%);
   transition:
@@ -25,6 +26,7 @@
 }
 
 .bq-panel.is-visible {
+  pointer-events: auto;
   opacity: 1;
   transform: none;
 }
@@ -66,7 +68,7 @@
   z-index: 10;
   background: var(--paper);
   border-bottom: 1px solid var(--gold-line-soft);
-  pointer-events: auto;
+  pointer-events: none;
   opacity: 0;
   transform: translateY(-8px);
   transition: opacity 300ms var(--ease-out), transform 300ms var(--ease-out);
@@ -77,6 +79,7 @@
   opacity: 1;
   transform: none;
 }
+.bq-panel.is-visible .bq-steps.is-on { pointer-events: auto; }
 
 .bq-step {
   flex: 1;
@@ -120,6 +123,7 @@
   .stage.is-active .bq-panel {
     opacity: 1;
     transform: translateY(-50%);
+    pointer-events: auto;
   }
   .bq-panel__body-scroll {
     height: auto;
