@@ -59,7 +59,7 @@ async function boot() {
   document.getElementById("home-btn").addEventListener("click", () => {
     if (rings.insideIndex !== null) rings.exit(true)
     if (card.isPaperOpen) card.closePaper()
-    window.scrollTo({ top: 0, behavior: "auto" })
+    experience.goToPage(0)
   })
 
   await nextFrames(2)

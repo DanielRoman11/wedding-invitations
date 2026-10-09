@@ -5,9 +5,6 @@ import "./bouquet.css"
 
 const plural = (n, one, many) => `${n} ${n === 1 ? one : many}`
 
-// Página donde se muestra el formulario (sec-2b es la 5.ª ancla, índice 4)
-const PANEL_PAGE = 4
-
 /**
  * UI de la sección 2 (ramo): cuenta regresiva, vestimenta y RSVP.
  * @param {{section: import("../../three/sections/BouquetSection.js").BouquetSection,
@@ -23,6 +20,7 @@ export function initBouquetUi({ section, guest, experience }) {
   const stepsEl = host.querySelector(".bq-steps")
   const panel = host.querySelector(".bq-panel")
   const bodyScroll = host.querySelector(".bq-panel__body-scroll")
+  const panelPage = [...document.querySelectorAll(".sec")].findIndex((page) => page.id === "sec-2b")
 
   $("bq-names").textContent = `${wedding.bride} & ${wedding.groom}`
   $("bq-date").textContent = wedding.dateLabel
@@ -59,7 +57,7 @@ export function initBouquetUi({ section, guest, experience }) {
   }, 1000)
 
   /* ---------------------- visibilidad del panel ---------------------- */
-  // El panel se muestra cuando el scroll llega a sec-2b (página 4).
+  // El panel se muestra cuando el scroll llega a sec-2b.
   // En landscape siempre es visible cuando la sección está activa.
   const isLandscape = () => window.innerWidth / window.innerHeight >= 0.85
   let panelVisible = false
@@ -92,7 +90,7 @@ export function initBouquetUi({ section, guest, experience }) {
       return
     }
     const page = experience.snapCurrentPage()
-    if (page >= PANEL_PAGE) showPanel()
+    if (page >= panelPage) showPanel()
     else hidePanel()
   }
 

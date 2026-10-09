@@ -52,6 +52,7 @@ export class Experience {
     this.smoothY = 0
     this._stage = -1
     this._pageStages = [0]
+    this._pageScrollYs = [0]
     this.sections = null
     this.ctx = null
     this.journey = new Journey()
@@ -64,7 +65,6 @@ export class Experience {
     this._flying = false
     this._scrollProxy = { y: 0 }
     this._scrollTween = null
-    this._discreteCardFlip = false
     this._stageListeners = new Set()
 
     this.#initRenderer()
@@ -251,7 +251,6 @@ export class Experience {
   refreshJourney() {
     const list = this.#list()
     if (!list.length) return
-    const vh = window.innerHeight
 
     // Cada `.sec` es una página de scroll de 100svh y declara a qué sección
     // pertenece (data-stage). La carta tiene varias: frente, reverso y una por
@@ -259,16 +258,21 @@ export class Experience {
     const poses = list.map((section) => section.cameraStop())
     const spacers = [...document.querySelectorAll(".sec")]
     this._pageStages = spacers.map((el) => Number(el.dataset.stage))
+    this._pageScrollYs = spacers.map((el) => Math.max(0, el.getBoundingClientRect().top + window.scrollY))
 
     const defs = []
-    spacers.forEach((el) => {
+    spacers.forEach((el, i) => {
       const pose = poses[Number(el.dataset.stage)]
       if (!pose) return
-      const rect = el.getBoundingClientRect()
-      const y = Math.max(0, rect.top + window.scrollY + rect.height / 2 - vh / 2)
-      defs.push({ y, pos: pose.pos, look: pose.look, plateau: 2 })
+      defs.push({
+        y: this._pageScrollYs[i],
+        pos: pose.pos,
+        look: pose.look,
+        plateau: window.matchMedia("(pointer: coarse)").matches ? 1 : 2,
+      })
     })
     this.journey.set(defs)
+    if (!this._flying) this._page = this.#nearestPage(window.scrollY)
   }
 
   /** Sube a la sección i con scroll suave */
@@ -276,12 +280,12 @@ export class Experience {
     const index = Math.min(STAGES - 1, Math.max(0, i))
     // La carta ocupa varias páginas: se busca la primera de la sección pedida
     const page = Math.max(0, (this._pageStages ?? []).indexOf(index))
-    this.#snapToPage(page)
+    this.#snapToPage(page, true)
   }
 
   /** Navega a una página específica del recorrido */
   goToPage(page) {
-    this.#snapToPage(page)
+    this.#snapToPage(page, true)
   }
 
   /** Retorna el número total de páginas */
@@ -300,56 +304,72 @@ export class Experience {
     return count
   }
 
-  #snapToPage(page) {
-    const n = (this._pageStages ?? []).length || 1
+  #snapToPage(page, allowInterrupt = false) {
+    const n = this._pageScrollYs.length || 1
     const p = Math.max(0, Math.min(n - 1, page))
-    if (this._flying && p === this._pageTarget) return
-    
-    const currentPage = this.snapCurrentPage()
-    const currentStage = this._pageStages[currentPage] ?? 0
-    const targetStage = this._pageStages[p] ?? 0
-    const isCardTransition = currentStage === 0 && targetStage === 0
-    const isMobile = window.matchMedia("(pointer: coarse)").matches
-    
-    if (isMobile && isCardTransition) {
-      window.scrollTo(0, p * window.innerHeight)
-      this._page = p
+    if (this._flying) {
+      if (!allowInterrupt) return
+      this._scrollTween?.kill()
+      this._scrollTween = null
       this._pageTarget = null
       this._flying = false
-      
-      const card = this.sections.card
-      const targetFlip = p > 0
-      const targetSheet = Math.max(0, p - 1)
-      
-      this._discreteCardFlip = true
-      card.animateFlip(targetFlip)
-      card.setSheetPos(targetSheet)
-      
-      gsap.delayedCall(0.4, () => {
-        this._discreteCardFlip = false
-      })
+      document.documentElement.classList.remove("is-paging")
+    } else {
+      this._page = this.#nearestPage(window.scrollY)
+    }
+
+    const targetY = this._pageScrollYs[p] ?? 0
+    const currentPage = this.#nearestPage(window.scrollY)
+    if (p === currentPage && Math.abs(window.scrollY - targetY) < 1) {
+      this._page = currentPage
       return
     }
-    
+
     this._pageTarget = p
     this._flying = true
+    document.documentElement.classList.add("is-paging")
     this._scrollTween?.kill()
     this._scrollProxy.y = window.scrollY
+    const isMobile = window.matchMedia("(pointer: coarse)").matches
     this._scrollTween = gsap.to(this._scrollProxy, {
-      y: p * window.innerHeight,
-      duration: this.reducedMotion ? 0.01 : 0.55,
+      y: targetY,
+      duration: this.reducedMotion ? 0.4 : isMobile ? 0.75 : 0.55,
       ease: "power2.inOut",
       onUpdate: () => window.scrollTo(0, Math.round(this._scrollProxy.y)),
       onComplete: () => {
+        window.scrollTo(0, targetY)
         this._page = p
         this._pageTarget = null
         this._flying = false
         this._scrollTween = null
+        document.documentElement.classList.remove("is-paging")
       },
     })
   }
 
-  /** Página comprometida (durante un vuelo devuelve la página destino). */
+  #pagePosition(y) {
+    const points = this._pageScrollYs
+    const last = points.length - 1
+    if (last <= 0 || y <= points[0]) return 0
+    if (y >= points[last]) return last
+
+    let low = 0
+    let high = last
+    while (low + 1 < high) {
+      const middle = Math.floor((low + high) / 2)
+      if (y < points[middle]) high = middle
+      else low = middle
+    }
+
+    const span = points[high] - points[low]
+    return span > 0 ? low + (y - points[low]) / span : high
+  }
+
+  #nearestPage(y) {
+    return Math.min(this._pageScrollYs.length - 1, Math.max(0, Math.round(this.#pagePosition(y))))
+  }
+
+  /** Devuelve la página actual o el destino del vuelo en curso. */
   snapCurrentPage() {
     return this._pageTarget ?? this._page
   }
@@ -573,7 +593,16 @@ export class Experience {
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     this.baseZ = this.#fitCameraZ()
     if (this.phase === "sealed") this.camera.position.z = this.baseZ
+    const targetPage = this._flying ? this._pageTarget : null
+    if (this._flying) {
+      this._scrollTween?.kill()
+      this._scrollTween = null
+      this._pageTarget = null
+      this._flying = false
+      document.documentElement.classList.remove("is-paging")
+    }
     this.refreshJourney()
+    if (targetPage !== null) this.#snapToPage(targetPage)
   }
 
   /* -------------------- toques tras abrir -------------------- */
@@ -674,19 +703,18 @@ export class Experience {
   }
 
   #updateJourney(delta, elapsed) {
-    const k = this.reducedMotion ? 1 : 1 - Math.exp(-delta * 6.5)
+    const k = this.reducedMotion || this._flying ? 1 : 1 - Math.exp(-delta * 6.5)
     this.smoothY += (window.scrollY - this.smoothY) * k
 
-    const vh = window.innerHeight
     const stages = this._pageStages ?? []
-    const page = Math.min(Math.max(stages.length - 1, 0), Math.max(0, Math.round(this.smoothY / vh)))
+    const position = this.#pagePosition(this.smoothY)
+    const page = Math.min(stages.length - 1, Math.max(0, Math.round(position)))
+    if (!this._flying) this._page = page
     this.#setStage(stages[page] ?? 0)
 
     const card = this.sections.card
-    if (!this._discreteCardFlip) {
-      card.setFlipProgress(Math.min(1, Math.max(0, this.smoothY / vh)))
-    }
-    card.setSheetPos(Math.max(0, this.smoothY / vh - 1))
+    card.setFlipProgress(Math.min(1, Math.max(0, position)))
+    card.setSheetPos(Math.max(0, position - 1))
 
     const section = this.#activeSection()
     if (section?.overrideCamera(this.camera)) {
@@ -732,6 +760,8 @@ export class Experience {
 
   dispose() {
     this.renderer.setAnimationLoop(null)
+    this._scrollTween?.kill()
+    document.documentElement.classList.remove("is-paging")
     this.snap?.unbind()
     for (const s of this.#list()) s.dispose()
     this.envelope.dispose()

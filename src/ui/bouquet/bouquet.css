@@ -99,7 +99,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .bq-steps {
-    transition-duration: 1ms;
+    transition: opacity 200ms var(--ease-out);
+    transform: none;
   }
 }
 
@@ -198,7 +199,7 @@
 
 @media (prefers-reduced-motion: reduce) {
   .bq-panel {
-    transition-duration: 1ms;
+    transition: opacity 200ms var(--ease-out);
     transition-delay: 0s !important;
   }
   .bq-panel,

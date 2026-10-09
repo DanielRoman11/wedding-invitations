@@ -253,6 +253,17 @@ html.is-open #scene {
   pointer-events: none;
 }
 
+@media (pointer: coarse) {
+  .journey {
+    padding-bottom: max(0px, calc(100dvh - 100svh));
+  }
+}
+
+html.is-paging {
+  scroll-snap-type: none;
+  touch-action: none;
+}
+
 .sec {
   height: 100svh;
   scroll-snap-align: start;
@@ -737,9 +748,20 @@ html.is-open .scroll-cue {
     animation: none;
   }
 
-  .btn,
-  .stage {
+  .btn {
     transition: none;
+  }
+
+  .stage {
+    transition:
+      opacity 200ms var(--ease-out),
+      visibility 0s linear 200ms;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) and (pointer: coarse) {
+  html.is-open:not(.is-paging) {
+    scroll-snap-type: y mandatory;
   }
 }
 
