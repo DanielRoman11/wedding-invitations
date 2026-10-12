@@ -11,7 +11,7 @@ const ARCH_CENTER_Y = 0.8
 const ARCH_FRONT_Z = 1.3
 const CARD_W = 1.8
 const CARD_H = 0.92
-const CARD_DEPTH = 0.12
+const CARD_DEPTH = 0.06
 const NOTE_COLUMNS = 4
 const NOTE_STEP_X = 2.2
 const NOTE_STEP_Y = 1.65
@@ -114,12 +114,12 @@ export class ArchSection extends Section {
     if (!wish?.message) return
     if (this.cards.some((card) => card.wish.message === wish.message && card.wish.name === wish.name)) return
     const texture = messageTexture(wish)
-    const edge = new THREE.MeshBasicMaterial({ color: 0xd4a44a, toneMapped: false })
+    const side = new THREE.MeshBasicMaterial({ color: 0xfef0c8, toneMapped: false })
     const front = new THREE.MeshBasicMaterial({ map: texture, transparent: true, toneMapped: false })
     const back = new THREE.MeshBasicMaterial({ color: 0xfef0c8, toneMapped: false })
     const mesh = new THREE.Mesh(
       new THREE.BoxGeometry(CARD_W, CARD_H, CARD_DEPTH),
-      [edge, edge, edge, edge, front, back],
+      [side, side, side, side, front, back],
     )
     // Zona de toque más grande que la tarjeta: en móvil es difícil atinar
     const hitMesh = new THREE.Mesh(
