@@ -1,16 +1,60 @@
+<button
+  type="button"
+  class="arch-add"
+  id="arch-add"
+  aria-haspopup="dialog"
+  aria-controls="arch-composer"
+  aria-expanded="false"
+>
+  <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+    <path d="M12 5v14M5 12h14" />
+  </svg>
+  <span>Dejar un deseo</span>
+</button>
+
 <button type="button" class="arch-back" id="arch-back" hidden aria-label="Volver al arco completo">
-  <svg
-    viewBox="0 0 24 24"
-    width="16"
-    height="16"
-    fill="none"
-    stroke="currentColor"
-    stroke-width="2"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    aria-hidden="true"
-  >
+  <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
     <path d="M15 18l-6-6 6-6" />
   </svg>
   Volver al arco
 </button>
+
+<dialog id="arch-composer" class="arch-composer" aria-labelledby="arch-composer-title">
+  <section class="arch-composer__sheet">
+    <button type="button" class="arch-composer__close" id="arch-composer-close" aria-label="Cerrar formulario">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+        <path d="M6 6l12 12M18 6L6 18" />
+      </svg>
+    </button>
+
+    <header class="arch-composer__heading">
+      <p class="arch-composer__eyebrow">Un detalle para los novios</p>
+      <h2 id="arch-composer-title">Deja un mensaje en el arco</h2>
+      <p class="arch-composer__intro">Tus palabras formarán parte de este recuerdo.</p>
+    </header>
+
+    <form id="arch-wish-form" class="arch-wish__form" novalidate>
+      <label class="arch-wish__field" data-wish-name-field hidden>
+        <span>Tu nombre completo</span>
+        <input type="text" name="name" autocomplete="name" maxlength="60" />
+      </label>
+      <label class="arch-wish__field">
+        <span>Tu deseo</span>
+        <textarea
+          name="message"
+          rows="4"
+          maxlength="140"
+          placeholder="Escribe unas palabras para los novios"
+        ></textarea>
+        <small class="wish__count">0 / 140</small>
+      </label>
+      <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true" />
+      <p class="form__error" role="alert" hidden></p>
+      <button type="submit" class="arch-wish__send">Dejar mensaje</button>
+    </form>
+  </section>
+</dialog>
+
+<p class="arch-toast" id="arch-toast" role="status" aria-live="polite" hidden>
+  ¡Gracias! Tu mensaje ya está en el arco.
+</p>

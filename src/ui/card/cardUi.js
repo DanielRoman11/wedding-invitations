@@ -127,9 +127,6 @@ export function initCardUi({ section, guest, experience }) {
   $("wish-close").addEventListener("click", () => section.closePaper())
 
   /* ------------------------------- deseos ------------------------------- */
-  // El campo de nombre solo se muestra si no conocemos al invitado
-  $("wish-name-field").hidden = !guest.isFallback
-
   let toastTimer = 0
   const showToast = () => {
     toast.hidden = false

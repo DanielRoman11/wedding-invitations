@@ -50,7 +50,7 @@ async function boot() {
   initCardUi({ section: card, guest, experience })
   initRingsUi({ section: rings, experience })
   initBouquetUi({ section: bouquet, guest, experience })
-  initArchUi({ section: experience.sections.arch })
+  initArchUi({ section: experience.sections.arch, guest, experience })
 
   // El arco conserva también los deseos que llegaron antes de abrir esta visita.
   fetchWishes().then((wishes) => experience.sections.arch.setWishes(wishes))

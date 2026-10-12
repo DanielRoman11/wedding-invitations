@@ -141,14 +141,15 @@ export function initRsvpForm(guest, onDone) {
 
 /* --------------------------------- Deseos -------------------------------- */
 
-/** @param {(wish:{name:string,message:string}) => void} onDone */
-export function initWishForm(guest, onDone) {
-  const form = $("wish-form")
-  const counter = $("wish-count")
+/** @param {(wish:{name:string,message:string}) => void} onDone @param {HTMLFormElement} form */
+export function initWishForm(guest, onDone, form = $("wish-form")) {
+  const counter = form.querySelector(".wish__count")
 
-  // El campo de nombre solo existe (visible) cuando no sabemos quién es el invitado
+  // Se pide el nombre solo cuando la URL no identifica al invitado.
   const nameInput = form.elements.name
   const askName = Boolean(guest.isFallback)
+  const nameField = nameInput.closest("label")
+  if (nameField) nameField.hidden = !askName
 
   const updateCount = () => {
     counter.textContent = `${form.elements.message.value.length} / 140`

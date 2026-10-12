@@ -8,12 +8,24 @@ import { Section } from "./Section.js"
 const ARCH_H = 10
 const ARCH_W = 9
 const ARCH_CENTER_Y = 0.8
+const ARCH_FRONT_Z = 1.3
 const CARD_W = 1.8
 const CARD_H = 0.92
+const CARD_DEPTH = 0.12
 const NOTE_COLUMNS = 4
 const NOTE_STEP_X = 2.2
 const NOTE_STEP_Y = 1.65
-const NOTE_Z = 0.7
+const NOTE_Z = ARCH_FRONT_Z + CARD_DEPTH / 2 + 0.5
+
+function disposeCard(card) {
+  card.mesh.geometry.dispose()
+  new Set(Array.isArray(card.mesh.material) ? card.mesh.material : [card.mesh.material]).forEach((material) => {
+    material.map?.dispose()
+    material.dispose()
+  })
+  card.hitMesh.geometry.dispose()
+  card.hitMesh.material.dispose()
+}
 
 function messageTexture(wish) {
   const canvas = document.createElement("canvas")
@@ -86,11 +98,7 @@ export class ArchSection extends Section {
     const all = [coupleWish, ...(Array.isArray(wishes) ? wishes : []), ...current]
     this.cards.forEach((card) => {
       this.group.remove(card.mesh)
-      card.mesh.material.map?.dispose()
-      card.mesh.material.dispose()
-      card.mesh.geometry.dispose()
-      card.hitMesh.geometry.dispose()
-      card.hitMesh.material.dispose()
+      disposeCard(card)
     })
     this.cards = []
     all.forEach((wish) => this.#createCard(wish, false))
@@ -106,9 +114,12 @@ export class ArchSection extends Section {
     if (!wish?.message) return
     if (this.cards.some((card) => card.wish.message === wish.message && card.wish.name === wish.name)) return
     const texture = messageTexture(wish)
+    const edge = new THREE.MeshBasicMaterial({ color: 0xd4a44a, toneMapped: false })
+    const front = new THREE.MeshBasicMaterial({ map: texture, transparent: true, toneMapped: false })
+    const back = new THREE.MeshBasicMaterial({ color: 0xfef0c8, toneMapped: false })
     const mesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(CARD_W, CARD_H),
-      new THREE.MeshBasicMaterial({ map: texture, transparent: true, side: THREE.DoubleSide, toneMapped: false }),
+      new THREE.BoxGeometry(CARD_W, CARD_H, CARD_DEPTH),
+      [edge, edge, edge, edge, front, back],
     )
     // Zona de toque más grande que la tarjeta: en móvil es difícil atinar
     const hitMesh = new THREE.Mesh(
@@ -254,12 +265,6 @@ export class ArchSection extends Section {
 
   dispose() {
     this.ctx.scene.remove(this.group)
-    this.cards.forEach((card) => {
-      card.mesh.geometry.dispose()
-      card.mesh.material.map?.dispose()
-      card.mesh.material.dispose()
-      card.hitMesh.geometry.dispose()
-      card.hitMesh.material.dispose()
-    })
+    this.cards.forEach(disposeCard)
   }
 }

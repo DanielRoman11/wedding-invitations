@@ -1,29 +1,54 @@
-/* Última escena (arco de deseos): botón para salir del zoom de un mensaje.
-   Pensado para móvil, donde no hay tecla Escape. */
+#stage-3 [hidden] {
+  display: none !important;
+}
+
+.arch-add,
 .arch-back {
   position: absolute;
   left: 50%;
-  bottom: calc(1.5rem + env(safe-area-inset-bottom));
   display: inline-flex;
   align-items: center;
-  gap: 0.45rem;
+  justify-content: center;
+  min-height: 3rem;
   padding: 0.65rem 1.25rem;
   border-radius: 999px;
-  border: 1px solid var(--gold-line-strong);
-  background: var(--surface);
-  color: var(--ink);
   font-family: var(--font-body);
   font-weight: 700;
-  font-size: 0.82rem;
   letter-spacing: 0.04em;
   cursor: pointer;
   pointer-events: auto;
   box-shadow: 0 8px 24px -12px oklch(0.28 0.04 55 / 0.45);
-  opacity: 0;
-  transform: translate(-50%, 12px);
   transition:
     opacity 320ms var(--ease-out),
-    transform 320ms var(--ease-out);
+    transform 320ms var(--ease-out),
+    background-color 180ms ease;
+}
+
+.arch-add {
+  bottom: max(1rem, env(safe-area-inset-bottom));
+  gap: 0.55rem;
+  min-width: 12rem;
+  color: var(--on-accent);
+  background: var(--accent-deep);
+  border: 1px solid var(--accent-deep);
+  font-size: 0.9rem;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+
+.arch-add:active {
+  transform: translateX(-50%) scale(0.97);
+}
+
+.arch-back {
+  bottom: calc(1rem + env(safe-area-inset-bottom));
+  gap: 0.45rem;
+  border: 1px solid var(--gold-line-strong);
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 0.82rem;
+  opacity: 0;
+  transform: translate(-50%, 12px);
 }
 
 .arch-back.is-on {
@@ -31,7 +56,20 @@
   transform: translate(-50%, 0);
 }
 
+.arch-add:focus-visible,
+.arch-back:focus-visible,
+.arch-composer__close:focus-visible,
+.arch-wish__field :is(input, textarea):focus-visible,
+.arch-wish__send:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 3px;
+}
+
 @media (hover: hover) and (pointer: fine) {
+  .arch-add:hover {
+    background: color-mix(in oklab, var(--accent-deep) 85%, black);
+  }
+
   .arch-back:hover {
     background: oklch(0.6 0.08 65 / 0.16);
   }
@@ -41,7 +79,225 @@
   transform: translate(-50%, 0) scale(0.97);
 }
 
-.arch-back:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 3px;
+.arch-composer {
+  position: fixed;
+  inset: 0;
+  display: none;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  max-height: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  color: var(--ink);
+  background: transparent;
+}
+
+.arch-composer[open] {
+  display: grid;
+  align-items: end;
+  justify-items: center;
+}
+
+.arch-composer::backdrop {
+  background: oklch(0.2 0.03 45 / 0.38);
+  backdrop-filter: blur(3px);
+}
+
+.arch-composer__sheet {
+  position: relative;
+  display: grid;
+  align-content: start;
+  gap: 1.2rem;
+  width: min(100%, 34rem);
+  max-height: calc(100dvh - env(safe-area-inset-top, 0px));
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 1.6rem 1.25rem calc(1.25rem + env(safe-area-inset-bottom));
+  border: 1px solid var(--surface-border);
+  border-bottom: 0;
+  border-radius: 1.5rem 1.5rem 0 0;
+  background: var(--surface-solid);
+  box-shadow: 0 -12px 40px -24px oklch(0.24 0.04 50 / 0.65);
+  scrollbar-width: thin;
+  scrollbar-color: var(--gold-line) transparent;
+}
+
+.arch-composer__close {
+  position: absolute;
+  top: 0.8rem;
+  right: 0.8rem;
+  display: grid;
+  place-items: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border: 1px solid var(--gold-line);
+  border-radius: 50%;
+  color: var(--ink);
+  background: var(--paper);
+  cursor: pointer;
+}
+
+.arch-composer__heading {
+  display: grid;
+  gap: 0.45rem;
+  padding-right: 2.5rem;
+}
+
+.arch-composer__eyebrow {
+  font-family: var(--font-script);
+  font-size: 1.45rem;
+  line-height: 1;
+  color: var(--accent);
+}
+
+.arch-composer__heading h2 {
+  font-family: var(--font-display);
+  font-size: clamp(1.35rem, 5vw, 1.8rem);
+  font-weight: 400;
+  line-height: 1.2;
+  text-wrap: balance;
+  color: var(--ink);
+}
+
+.arch-composer__intro {
+  color: var(--muted);
+  font-size: 0.9rem;
+  line-height: 1.45;
+}
+
+.arch-wish__form {
+  display: grid;
+  gap: 1rem;
+  text-align: left;
+}
+
+.arch-wish__field {
+  display: grid;
+  gap: 0.4rem;
+}
+
+.arch-wish__field > span {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.arch-wish__field input,
+.arch-wish__field textarea {
+  width: 100%;
+  min-height: 3.25rem;
+  padding: 0.75rem 0.9rem;
+  border: 1px solid var(--gold-line);
+  border-radius: 12px;
+  color: var(--paper-ink);
+  background: var(--paper-field);
+  font: inherit;
+  font-size: 16px;
+}
+
+.arch-wish__field textarea {
+  min-height: 7rem;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+.arch-wish__field :is(input, textarea)::placeholder {
+  color: var(--ink-mute);
+  opacity: 0.72;
+}
+
+.arch-wish__field .wish__count {
+  justify-self: end;
+  color: var(--ink-mute);
+  font-size: 0.75rem;
+}
+
+.arch-wish__send {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 3.25rem;
+  padding: 0.7rem 1rem;
+  border: 1px solid var(--accent-deep);
+  border-radius: 999px;
+  color: var(--on-accent);
+  background: var(--accent-deep);
+  font: 700 0.95rem var(--font-body);
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition:
+    transform 180ms var(--ease-out),
+    background-color 180ms ease,
+    opacity 180ms ease;
+}
+
+.arch-wish__send:active {
+  transform: scale(0.98);
+}
+
+.arch-wish__send:disabled {
+  opacity: 0.65;
+  cursor: progress;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .arch-wish__send:not(:disabled):hover {
+    background: color-mix(in oklab, var(--accent-deep) 85%, black);
+  }
+}
+
+.arch-toast {
+  position: absolute;
+  left: 50%;
+  bottom: calc(5rem + env(safe-area-inset-bottom));
+  width: min(92vw, 28rem);
+  padding: 0.8rem 1.1rem;
+  border: 1px solid var(--surface-border);
+  border-radius: 14px;
+  color: var(--ink);
+  background: var(--surface-solid);
+  box-shadow: 0 12px 34px -12px oklch(0.4 0.06 60 / 0.45);
+  font-size: 0.9rem;
+  text-align: center;
+  opacity: 0;
+  transform: translate(-50%, 12px);
+  transition:
+    opacity 300ms var(--ease-out),
+    transform 300ms var(--ease-out);
+  pointer-events: none;
+}
+
+.arch-toast.is-on {
+  opacity: 1;
+  transform: translate(-50%, 0);
+}
+
+@media (min-width: 720px) {
+  .arch-composer[open] {
+    align-items: center;
+    padding: 2rem;
+  }
+
+  .arch-composer__sheet {
+    max-height: min(84dvh, 42rem);
+    padding: 2rem;
+    border: 1px solid var(--surface-border);
+    border-radius: 1.5rem;
+    box-shadow: 0 18px 55px -24px oklch(0.24 0.04 50 / 0.65);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .arch-add,
+  .arch-back,
+  .arch-wish__send,
+  .arch-toast {
+    transition: none;
+  }
 }
