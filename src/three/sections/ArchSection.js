@@ -10,6 +10,10 @@ const ARCH_W = 9
 const ARCH_CENTER_Y = 0.8
 const CARD_W = 1.8
 const CARD_H = 0.92
+const NOTE_COLUMNS = 4
+const NOTE_STEP_X = 2.2
+const NOTE_STEP_Y = 1.65
+const NOTE_Z = 0.7
 
 function messageTexture(wish) {
   const canvas = document.createElement("canvas")
@@ -89,10 +93,16 @@ export class ArchSection extends Section {
       card.hitMesh.material.dispose()
     })
     this.cards = []
-    all.forEach((wish) => this.addWish(wish, false))
+    all.forEach((wish) => this.#createCard(wish, false))
+    this.#layoutCards()
   }
 
   addWish(wish, animate = true) {
+    if (!this.#createCard(wish, animate)) return
+    this.#layoutCards()
+  }
+
+  #createCard(wish, animate) {
     if (!wish?.message) return
     if (this.cards.some((card) => card.wish.message === wish.message && card.wish.name === wish.name)) return
     const texture = messageTexture(wish)
@@ -102,19 +112,12 @@ export class ArchSection extends Section {
     )
     // Zona de toque más grande que la tarjeta: en móvil es difícil atinar
     const hitMesh = new THREE.Mesh(
-      new THREE.PlaneGeometry(CARD_W * 1.3, CARD_H * 1.45),
+      new THREE.PlaneGeometry(CARD_W * 1.08, CARD_H * 1.12),
       new THREE.MeshBasicMaterial({ visible: false, side: THREE.DoubleSide }),
     )
     mesh.add(hitMesh)
     const i = this.cards.length
     const angle = i * 2.39996323
-    const radius = 2.2 + (i % 3) * 0.9
-    const target = new THREE.Vector3(
-      Math.cos(angle) * Math.min(radius, 3.15),
-      0.85 + (i % 4) * 1.05,
-      0.7 + (i % 2) * 0.12,
-    )
-    mesh.position.copy(target)
     mesh.rotation.z = Math.sin(angle) * 0.12
     mesh.scale.setScalar(animate ? 0.01 : 1)
     this.group.add(mesh)
@@ -122,7 +125,7 @@ export class ArchSection extends Section {
       mesh,
       hitMesh,
       wish,
-      baseY: target.y,
+      baseY: ARCH_CENTER_Y,
       baseRot: mesh.rotation.z,
       // Vaivén propio de cada tarjeta: fase, velocidad y amplitud al azar
       phase: Math.random() * Math.PI * 2,
@@ -131,6 +134,26 @@ export class ArchSection extends Section {
       ampRot: 0.04 + Math.random() * 0.07,
     })
     if (animate) gsap.to(mesh.scale, { x: 1, y: 1, z: 1, duration: 0.8, ease: "back.out(1.5)" })
+    return true
+  }
+
+  #layoutCards() {
+    const count = this.cards.length
+    const rows = Math.max(1, Math.ceil(count / NOTE_COLUMNS))
+    const baseCount = Math.floor(count / rows)
+    const extraRows = count % rows
+    let index = 0
+
+    for (let row = 0; row < rows; row++) {
+      const rowCount = baseCount + (row < extraRows ? 1 : 0)
+      const y = ARCH_CENTER_Y + ((rows - 1) / 2 - row) * NOTE_STEP_Y
+
+      for (let column = 0; column < rowCount; column++) {
+        const card = this.cards[index++]
+        card.mesh.position.set((column - (rowCount - 1) / 2) * NOTE_STEP_X, y, NOTE_Z)
+        card.baseY = y
+      }
+    }
   }
 
   activate() { this.active = true }
