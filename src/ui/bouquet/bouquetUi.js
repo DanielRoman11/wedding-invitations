@@ -65,6 +65,7 @@ export function initBouquetUi({ section, guest, experience }) {
   const showPanel = () => {
     if (panelVisible) return
     panelVisible = true
+    document.documentElement.classList.add("is-bouquet-panel")
     panel.classList.add("is-visible")
     stepsEl.hidden = false
     requestAnimationFrame(() => stepsEl.classList.add("is-on"))
@@ -73,6 +74,7 @@ export function initBouquetUi({ section, guest, experience }) {
   const hidePanel = () => {
     if (!panelVisible) return
     panelVisible = false
+    document.documentElement.classList.remove("is-bouquet-panel")
     panel.classList.remove("is-visible")
     stepsEl.classList.remove("is-on")
     // Ocultar steps al terminar la transición

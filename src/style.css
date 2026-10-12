@@ -885,6 +885,12 @@ html.is-open .scroll-hint.is-hidden {
   }
 }
 
+@media (pointer: coarse) {
+  html.is-bouquet-panel .scroll-hint {
+    display: none;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .scroll-hint {
     transition: none;

@@ -21,7 +21,7 @@ export function initCardUi({ section, guest, experience }) {
   const wish = $("wish-panel")
   const toast = $("card-toast")
 
-  fillCardBack()
+  fillCardBack(guest)
   const pager = initBackPages(back, section, experience)
 
   const prevBtn = $("card-prev")

@@ -149,6 +149,7 @@
 @media (max-width: 768px) {
   .card-nav:not(.is-hidden) {
     display: flex;
+    position: fixed;
   }
 }
 

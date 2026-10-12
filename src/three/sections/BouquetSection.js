@@ -14,8 +14,8 @@ const NEAR = 40
 const LOOK_Y = 0.3
 
 /**
- * Sección 3: el ramo de novia. Se coloca a un lado del panel HTML (izquierda
- * en horizontal, arriba en vertical) y se arrastra para girarlo.
+ * Sección 3: el ramo de novia. En horizontal se coloca a un lado del panel HTML;
+ * en vertical se centra y se arrastra para girarlo.
  */
 export class BouquetSection extends Section {
   constructor(ctx) {
@@ -61,7 +61,7 @@ export class BouquetSection extends Section {
     const visH = 2 * dist * tanH
     const visWidth = visH * aspect
     const targetX = landscape ? -0.27 * visWidth : 0
-    const targetY = landscape ? LOOK_Y : LOOK_Y + 0.24 * visH
+    const targetY = LOOK_Y
     this.group.scale.setScalar(scale)
     this._basePos.set(targetX, targetY - CENTER_Y * scale, BOUQUET_Z)
     this.group.position.copy(this._basePos)

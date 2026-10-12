@@ -91,6 +91,8 @@ experience })` o `initArchUi({ section })`. `main.js` las llama UNA vez tras
 
 ## Convenciones
 
+- No poner comentarios que no sean necesarios, solo usarlos para funciones principales explicando que hace la funcion, no para dar contexto
+- Los commits se hacen en formato feat:, fix:, chore:, etc... Sin descripcion y con maximo 5 palabras.
 - Fases de la escena: `sealed` → `opening` → `open` (en `Experience`).
 - Scroll: cinco anclas `.sec` `#sec-0, #sec-0b, #sec-1..3` (100svh, `scroll-snap-align: start`,
   `scroll-snap-stop: always`) que son solo espaciadores. El núcleo fija

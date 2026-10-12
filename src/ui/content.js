@@ -96,7 +96,7 @@ function copyIcon() {
 /* ------------------------------ render ------------------------------ */
 
 /** Rellena el reverso de la carta: lugar, calendario, notas y lluvia de sobres */
-export function fillCardBack() {
+export function fillCardBack(guest) {
   // Lugar
   $("venue-name").textContent = wedding.venueName
   $("venue-address").textContent = wedding.venueAddress
@@ -109,8 +109,12 @@ export function fillCardBack() {
 
   // Notas prácticas
   const notes = $("notes-list")
-  practicalNotes.forEach((text) => notes.append(el("li", "", text)))
-  $("notes-block").hidden = practicalNotes.length === 0
+  const personalNote = guest.isFallback
+    ? "Esta invitación es personal y no incluye acompañantes."
+    : `Esta invitación es exclusiva e intransferible para ${guest.name}; no incluye acompañantes.`
+  const notesToShow = [...practicalNotes, personalNote]
+  notesToShow.forEach((text) => notes.append(el("li", "", text)))
+  $("notes-block").hidden = notesToShow.length === 0
 
   $("gifts-title").textContent = gifts.title
   $("gifts-message").textContent = gifts.message

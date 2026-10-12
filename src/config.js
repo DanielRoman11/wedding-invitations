@@ -51,9 +51,9 @@ export const ringLabels = {
 
 export const practicalNotes = [
   "Parqueadero disponible en el lugar.",
-  "Confirma tu asistencia antes de la fecha límite.",
-  "Sin blanco, el color esta reservado para la novia",
-  "Sin beige, ni negro o colores similares, queremos que sea un momento alegre",
+  "Confirma tu asistencia antes de la fecha límite en el formulario",
+  "Sin blanco, color esta reservado para la novia",
+  "Sin beige, negro o colores similares, queremos un momento alegre",
 ];
 
 export const gifts = {
